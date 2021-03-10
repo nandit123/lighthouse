@@ -1,9 +1,10 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -45,7 +46,7 @@ var Powergate = /** @class */ (function () {
             var jobId;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.pow.ffs.pushStorageConfig(cid)];
+                    case 0: return [4 /*yield*/, this.pow.storageConfig.apply(cid)];
                     case 1:
                         jobId = (_a.sent()).jobId;
                         return [2 /*return*/, jobId];
@@ -54,22 +55,24 @@ var Powergate = /** @class */ (function () {
         });
     };
     Powergate.prototype.watchJob = function (jobId, callback) {
-        return this.pow.ffs.watchJobs(function (job) {
+        return this.pow.storageJobs.watch(function (job) {
             callback(job);
-            /* if (job.status === ffsTypes.JobStatus.JOB_STATUS_CANCELED) {
-              console.log("job canceled");
-            } else if (job.status === ffsTypes.JobStatus.JOB_STATUS_FAILED) {
-              console.log("job failed");
-            } else if (job.status === ffsTypes.JobStatus.JOB_STATUS_SUCCESS) {
-              console.log("job success!");
-            } */
+            if (job.status === powergate_client_1.powTypes.JobStatus.JOB_STATUS_CANCELED) {
+                console.log("job canceled");
+            }
+            else if (job.status === powergate_client_1.powTypes.JobStatus.JOB_STATUS_FAILED) {
+                console.log("job failed");
+            }
+            else if (job.status === powergate_client_1.powTypes.JobStatus.JOB_STATUS_SUCCESS) {
+                console.log("job success!");
+            }
         }, jobId);
     };
     Powergate.prototype.watchLogs = function (cid, callback) {
         // watch all FFS events for a cid
-        return this.pow.ffs.watchLogs(function (logEvent) {
+        return this.pow.data.watchLogs(function (logEvent) {
+            console.log("received event for cid " + logEvent.cid);
             callback(logEvent);
-            //console.log(`received event for cid ${logEvent.cid}`);
         }, cid);
     };
     return Powergate;
