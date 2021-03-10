@@ -1,5 +1,7 @@
-import { createPow, ffsTypes } from "@textile/powergate-client";
-import { Pow } from "@textile/powergate-client/dist/index";
+import { createPow, powTypes } from "@textile/powergate-client";
+
+import { Pow } from "@textile/powergate-client/dist/index"
+
 import Provider from "./provider";
 import { PowergateConfig, Data } from "../interfaces";
 
@@ -12,28 +14,29 @@ class Powergate implements Provider {
 
   async store(cid: string): Promise<string> {
     // store the data in FFS using the default storage configuration
-    const { jobId } = await this.pow.ffs.pushStorageConfig(cid);
+    // store the data using the default storage configuration
+    const { jobId } = await this.pow.storageConfig.apply(cid);
     return jobId;
   }
 
   watchJob(jobId: string, callback: Function): Function {
-    return this.pow.ffs.watchJobs((job) => {
+    return this.pow.storageJobs.watch((job) => {
       callback(job);
-      /* if (job.status === ffsTypes.JobStatus.JOB_STATUS_CANCELED) {
+      if (job.status === powTypes.JobStatus.JOB_STATUS_CANCELED) {
         console.log("job canceled");
-      } else if (job.status === ffsTypes.JobStatus.JOB_STATUS_FAILED) {
+      } else if (job.status === powTypes.JobStatus.JOB_STATUS_FAILED) {
         console.log("job failed");
-      } else if (job.status === ffsTypes.JobStatus.JOB_STATUS_SUCCESS) {
+      } else if (job.status === powTypes.JobStatus.JOB_STATUS_SUCCESS) {
         console.log("job success!");
-      } */
+      }  
     }, jobId);
   }
 
   watchLogs(cid: string, callback: Function): Function {
     // watch all FFS events for a cid
-    return this.pow.ffs.watchLogs((logEvent) => {
+    return this.pow.data.watchLogs((logEvent) => {
+      console.log(`received event for cid ${logEvent.cid}`)
       callback(logEvent);
-      //console.log(`received event for cid ${logEvent.cid}`);
     }, cid);
   }
 }
