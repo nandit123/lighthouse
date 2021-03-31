@@ -40,7 +40,42 @@ var powergate_client_1 = require("@textile/powergate-client");
 var Powergate = /** @class */ (function () {
     function Powergate(config) {
         this.pow = powergate_client_1.createPow(config.host);
+        this.token = this.getUserToken();
+        this.setUserToken();
     }
+    Powergate.prototype.getUserToken = function () {
+        var _this = this;
+        return new Promise(function (resolve) {
+            (function () { return __awaiter(_this, void 0, void 0, function () {
+                var user;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, this.pow.admin.users.create()]; // save this token for later use!
+                        case 1:
+                            user = (_a.sent()) // save this token for later use!
+                            .user;
+                            resolve(user.token);
+                            return [2 /*return*/];
+                    }
+                });
+            }); });
+        });
+    };
+    Powergate.prototype.setUserToken = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        _b = (_a = this.pow).setToken;
+                        return [4 /*yield*/, this.token];
+                    case 1:
+                        _b.apply(_a, [_c.sent()]);
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
     Powergate.prototype.store = function (cid) {
         return __awaiter(this, void 0, void 0, function () {
             var jobId;
