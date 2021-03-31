@@ -14,6 +14,7 @@ var Parser = /** @class */ (function () {
         // Use Infura as a fallback source
         // When the Lighthouse node starts, if we get a response from Vulcanize
         // before the set Timeout, then we woud use Vulcanize, otherwise, use Infura
+        this.vulcanize.start();
         this.infura.start();
     };
     return Parser;
