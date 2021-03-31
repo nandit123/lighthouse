@@ -60,6 +60,7 @@ var StorageProvider = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.powergate.store(cid)];
                     case 1:
                         jobId = _a.sent();
+                        // @todo store eth address somewhere along with the cid
                         // start watching the jobId
                         this.watchJob(jobId);
                         // start watching the logs
