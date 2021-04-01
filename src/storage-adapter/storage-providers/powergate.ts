@@ -11,7 +11,7 @@ class Powergate implements Provider {
 
   constructor(config: PowergateConfig) {
     this.pow = createPow(config.host);
-    this.token = this.getUserToken();
+    // this.token = this.getUserToken();
     this.setUserToken();
   }
 
@@ -26,7 +26,9 @@ class Powergate implements Provider {
   }
 
   async setUserToken() {
-    this.pow.setToken(await this.token);
+    console.log('setUserToken called:', process.env.POW_TOKEN);
+    this.pow.setToken(process.env.POW_TOKEN);
+    // this.pow.setToken(await this.token);
   }
 
   async store(cid: string): Promise<string> {
