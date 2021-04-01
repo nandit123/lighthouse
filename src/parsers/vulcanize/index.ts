@@ -34,7 +34,17 @@ class Vulcanize {
     console.log('entered vulcanize');
     client.runSubscription(query)
     .subscribe({
-      next: res => console.log(JSON.stringify(res.data)),
+      next: res => {
+        console.log(JSON.stringify(res.data));
+        console.log('cid:', res.data.listen.relatedNode.dataCid);
+        console.log('config:', res.data.listen.relatedNode.dataConfig);
+        console.log('address:', res.data.listen.relatedNode.dataUploader);
+        let cid = res.data.listen.relatedNode.dataCid;
+        let config = res.data.listen.relatedNode.dataConfig;
+        let address = '0x' + res.data.listen.relatedNode.dataUploader;
+        const jobId = this.storageAdapter.store(address, cid, config);
+        console.log('cid:', res.data.listen.relatedNode.dataCid, '& jobId:', jobId)
+      },
       error: error => console.error(error),
       complete: () => console.log('done'),
     })
