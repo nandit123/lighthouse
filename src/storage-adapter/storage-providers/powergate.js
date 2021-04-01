@@ -40,7 +40,7 @@ var powergate_client_1 = require("@textile/powergate-client");
 var Powergate = /** @class */ (function () {
     function Powergate(config) {
         this.pow = powergate_client_1.createPow(config.host);
-        this.token = this.getUserToken();
+        // this.token = this.getUserToken();
         this.setUserToken();
     }
     Powergate.prototype.getUserToken = function () {
@@ -63,16 +63,10 @@ var Powergate = /** @class */ (function () {
     };
     Powergate.prototype.setUserToken = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, _b;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
-                    case 0:
-                        _b = (_a = this.pow).setToken;
-                        return [4 /*yield*/, this.token];
-                    case 1:
-                        _b.apply(_a, [_c.sent()]);
-                        return [2 /*return*/];
-                }
+            return __generator(this, function (_a) {
+                console.log('setUserToken called:', process.env.POW_TOKEN);
+                this.pow.setToken(process.env.POW_TOKEN);
+                return [2 /*return*/];
             });
         });
     };
