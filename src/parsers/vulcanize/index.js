@@ -12,10 +12,21 @@ var Vulcanize = /** @class */ (function () {
     }
     // make call to vulcanize graphql here to get the event
     Vulcanize.prototype.start = function () {
+        var _this = this;
         console.log('entered vulcanize');
         client.runSubscription(query)
             .subscribe({
-            next: function (res) { return console.log(JSON.stringify(res.data)); },
+            next: function (res) {
+                console.log(JSON.stringify(res.data));
+                console.log('cid:', res.data.listen.relatedNode.dataCid);
+                console.log('config:', res.data.listen.relatedNode.dataConfig);
+                console.log('address:', res.data.listen.relatedNode.dataUploader);
+                var cid = res.data.listen.relatedNode.dataCid;
+                var config = res.data.listen.relatedNode.dataConfig;
+                var address = '0x' + res.data.listen.relatedNode.dataUploader;
+                var jobId = _this.storageAdapter.store(address, cid, config);
+                console.log('cid:', res.data.listen.relatedNode.dataCid, '& jobId:', jobId);
+            },
             error: function (error) { return console.error(error); },
             complete: function () { return console.log('done'); }
         });
