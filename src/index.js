@@ -1,6 +1,7 @@
 "use strict";
 exports.__esModule = true;
 var parsers_1 = require("./parsers");
+var io = require("socket.io")(3002);
 // Get the variables from .env file
 require("dotenv").config();
 var infuraURL = process.env.INFURA_URL;
@@ -35,3 +36,14 @@ var config = {
 // Start parsers
 var parser = new parsers_1["default"](config, infuraURL, vulcanizeURL);
 parser.start();
+io.on("connection", function (socket) {
+    // either with send()
+    socket.send("Welcome to Lighthouse!");
+    // or with emit() and custom event names
+    socket.emit("storageInfo", "this is some storage info");
+    // handle the event sent with socket.emit()
+    socket.on("cid", function (cid) {
+        console.log("cid recieved:", cid);
+        // do something with this cid
+    });
+});

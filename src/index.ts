@@ -1,4 +1,5 @@
 import Parser from "./parsers";
+const io = require("socket.io")(3002);
 
 // Get the variables from .env file
 require("dotenv").config();
@@ -38,3 +39,17 @@ const config = {
 
 const parser = new Parser(config, infuraURL, vulcanizeURL);
 parser.start();
+
+io.on("connection", socket => {
+  // either with send()
+  socket.send("Welcome to Lighthouse!");
+
+  // or with emit() and custom event names
+  socket.emit("storageInfo", "this is some storage info");
+
+  // handle the event sent with socket.emit()
+  socket.on("cid", (cid) => {
+    console.log("cid recieved:", cid);
+    // do something with this cid
+  });
+});
