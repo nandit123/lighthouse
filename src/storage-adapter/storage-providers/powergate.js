@@ -94,6 +94,7 @@ var Powergate = /** @class */ (function () {
             }
             else if (job.status === powergate_client_1.powTypes.JobStatus.JOB_STATUS_SUCCESS) {
                 console.log("job success!");
+                console.log("The job is:", job);
             }
         }, jobId);
     };
@@ -103,6 +104,19 @@ var Powergate = /** @class */ (function () {
             console.log("received event for cid " + logEvent.cid);
             callback(logEvent);
         }, cid);
+    };
+    Powergate.prototype.getStorageInfo = function (cid) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                // store the data using the default storage configuration
+                // const storageInfo = await this.pow.storageInfo.get(cid);
+                // return storageInfo;
+                return [2 /*return*/, new Promise(function (resolve, reject) {
+                        resolve(_this.pow.storageInfo.get(cid));
+                    })];
+            });
+        });
     };
     return Powergate;
 }());

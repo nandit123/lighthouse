@@ -46,6 +46,7 @@ class Powergate implements Provider {
         console.log("job failed");
       } else if (job.status === powTypes.JobStatus.JOB_STATUS_SUCCESS) {
         console.log("job success!");
+        console.log("The job is:", job);
       }  
     }, jobId);
   }
@@ -57,6 +58,15 @@ class Powergate implements Provider {
       callback(logEvent);
     }, cid);
   }
+
+  async getStorageInfo(cid: string): Promise<object> {
+    // store the data using the default storage configuration
+    // const storageInfo = await this.pow.storageInfo.get(cid);
+    // return storageInfo;
+    return new Promise((resolve, reject) => {
+      resolve(this.pow.storageInfo.get(cid))
+    })
+  } 
 }
 
 export default Powergate;
