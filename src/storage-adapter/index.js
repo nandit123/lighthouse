@@ -24,6 +24,10 @@ var StorageAdapter = /** @class */ (function () {
         }
         return this.storageProvider.store(address, cid);
     };
+    StorageAdapter.prototype.getStorageInfo = function (cid) {
+        console.log('cid in storage-adapter');
+        return this.storageProvider.getStorageInfo(cid);
+    };
     return StorageAdapter;
 }());
 exports["default"] = StorageAdapter;

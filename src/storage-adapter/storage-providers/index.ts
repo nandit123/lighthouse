@@ -48,6 +48,11 @@ class StorageProvider {
       // publish the logs via websocket server (room: address_logs)
     });
   }
+
+  async getStorageInfo(cid: string): Promise<object> {
+    console.log('cid in storage-provider');
+    return this.powergate.getStorageInfo(cid);
+  }
 }
 
 export default StorageProvider;
