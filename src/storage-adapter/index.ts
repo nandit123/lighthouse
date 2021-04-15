@@ -29,6 +29,11 @@ class StorageAdapter {
     }
     return this.storageProvider.store(address, cid);
   }
+
+  getStorageInfo(cid: string): Promise<object> {
+    console.log('cid in storage-adapter');
+    return this.storageProvider.getStorageInfo(cid);
+  }
 }
 
 export default StorageAdapter;
