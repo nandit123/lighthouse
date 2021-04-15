@@ -1,4 +1,4 @@
-import { StorageConfig } from "@textile/grpc-powergate-client/dist/ffs/rpc/rpc_pb";
+import { StorageConfig } from "@textile/grpc-powergate-client/dist/powergate/user/v1/user_pb";
 import { Config } from "@textile/powergate-client/dist/index";
 
 export interface PowergateConfig {

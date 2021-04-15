@@ -1,5 +1,6 @@
 "use strict";
 exports.__esModule = true;
+exports.contractAddress = exports.abi = void 0;
 exports.abi = [
     {
         anonymous: false,

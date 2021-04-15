@@ -25,6 +25,8 @@ class StorageProvider {
   async store(address: string, cid: string): Promise<string> {
     const jobId = await this.powergate.store(cid);
 
+    // @todo store eth address somewhere along with the cid
+
     // start watching the jobId
     this.watchJob(jobId);
 
@@ -45,6 +47,11 @@ class StorageProvider {
     return this.powergate.watchLogs(cid, () => {
       // publish the logs via websocket server (room: address_logs)
     });
+  }
+
+  async getStorageInfo(cid: string): Promise<object> {
+    console.log('cid in storage-provider');
+    return this.powergate.getStorageInfo(cid);
   }
 }
 

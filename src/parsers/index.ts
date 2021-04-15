@@ -1,6 +1,7 @@
 import Infura from "./infura";
 import Vulcanize from "./vulcanize";
 import StorageAdapter from "../storage-adapter";
+const io = require("socket.io")(3002);
 
 class Parser {
   config: any;
@@ -18,8 +19,31 @@ class Parser {
     // Use Infura as a fallback source
     // When the Lighthouse node starts, if we get a response from Vulcanize
     // before the set Timeout, then we woud use Vulcanize, otherwise, use Infura
-
+    this.vulcanize.start();
     this.infura.start();
+  }
+
+  getStorageInfo(cid) {
+    return this.storageAdapter.getStorageInfo(cid);
+  }
+
+  socket() {
+    console.log('socket started')
+    io.on("connection", socket => {
+      // either with send()
+      socket.send("Welcome to Lighthouse!");
+  
+      var storageInfo;
+      // handle the event sent with socket.emit()
+      socket.on("cid", async (cid) => {
+        console.log("cid recieved:", cid);
+
+        console.log('storageInfo is', JSON.stringify(await this.storageAdapter.getStorageInfo(cid)));
+        let storageInfo = JSON.stringify(await this.storageAdapter.getStorageInfo(cid));
+        // or with emit() and custom event names
+        socket.emit("storageInfo", storageInfo);
+      });
+    });
   }
 }
 

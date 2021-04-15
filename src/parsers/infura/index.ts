@@ -12,100 +12,7 @@ class Infura {
 
     this.web3 = new Web3(new Web3.providers.WebsocketProvider(url));
     this.contract = new this.web3.eth.Contract(
-      [
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "address",
-              name: "uploader",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "string",
-              name: "cid",
-              type: "string",
-            },
-            {
-              indexed: false,
-              internalType: "string",
-              name: "config",
-              type: "string",
-            },
-            {
-              indexed: false,
-              internalType: "enum FPS.storageStatus",
-              name: "status",
-              type: "uint8",
-            },
-          ],
-          name: "CidStatusUpdate",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "address",
-              name: "uploader",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "string",
-              name: "cid",
-              type: "string",
-            },
-            {
-              indexed: false,
-              internalType: "string",
-              name: "config",
-              type: "string",
-            },
-          ],
-          name: "StorageRequest",
-          type: "event",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "cid",
-              type: "string",
-            },
-            {
-              internalType: "string",
-              name: "config",
-              type: "string",
-            },
-          ],
-          name: "store",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "cid",
-              type: "string",
-            },
-            {
-              internalType: "enum FPS.storageStatus",
-              name: "status",
-              type: "uint8",
-            },
-          ],
-          name: "updateStorageStatus",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-      ],
+      abi,
       contractAddress,
       {
         from: "0x073Ab1C0CAd3677cDe9BDb0cDEEDC2085c029579",
@@ -115,6 +22,7 @@ class Infura {
   }
 
   start() {
+    console.log('hello yo');
     this.contract.events.StorageRequest((error, event) => {
       if (error) {
         // TODO:  Log error

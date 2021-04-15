@@ -1,9 +1,10 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -59,6 +60,7 @@ var StorageProvider = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.powergate.store(cid)];
                     case 1:
                         jobId = _a.sent();
+                        // @todo store eth address somewhere along with the cid
                         // start watching the jobId
                         this.watchJob(jobId);
                         // start watching the logs
@@ -77,6 +79,14 @@ var StorageProvider = /** @class */ (function () {
     StorageProvider.prototype.watchLogs = function (cid) {
         return this.powergate.watchLogs(cid, function () {
             // publish the logs via websocket server (room: address_logs)
+        });
+    };
+    StorageProvider.prototype.getStorageInfo = function (cid) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                console.log('cid in storage-provider');
+                return [2 /*return*/, this.powergate.getStorageInfo(cid)];
+            });
         });
     };
     return StorageProvider;
