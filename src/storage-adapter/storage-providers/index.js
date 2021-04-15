@@ -81,6 +81,14 @@ var StorageProvider = /** @class */ (function () {
             // publish the logs via websocket server (room: address_logs)
         });
     };
+    StorageProvider.prototype.getStorageInfo = function (cid) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                console.log('cid in storage-provider');
+                return [2 /*return*/, this.powergate.getStorageInfo(cid)];
+            });
+        });
+    };
     return StorageProvider;
 }());
 exports["default"] = StorageProvider;
