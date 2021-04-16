@@ -33,13 +33,19 @@ class Parser {
       // either with send()
       socket.send("Welcome to Lighthouse!");
   
-      var storageInfo;
       // handle the event sent with socket.emit()
       socket.on("cid", async (cid) => {
         console.log("cid recieved:", cid);
 
-        console.log('storageInfo is', JSON.stringify(await this.storageAdapter.getStorageInfo(cid)));
-        let storageInfo = JSON.stringify(await this.storageAdapter.getStorageInfo(cid));
+        let storageInfo;
+        try {
+          console.log('entered si');
+          console.log('storageInfo is', JSON.stringify(await this.storageAdapter.getStorageInfo(cid)));
+          storageInfo = JSON.stringify(await this.storageAdapter.getStorageInfo(cid));
+        } catch(e) {
+          console.log('entered catch');
+          storageInfo = { storageInfo: 'no-deal-found' }
+        }
         // or with emit() and custom event names
         socket.emit("storageInfo", storageInfo);
       });

@@ -63,24 +63,34 @@ var Parser = /** @class */ (function () {
         io.on("connection", function (socket) {
             // either with send()
             socket.send("Welcome to Lighthouse!");
-            var storageInfo;
             // handle the event sent with socket.emit()
             socket.on("cid", function (cid) { return __awaiter(_this, void 0, void 0, function () {
-                var _a, _b, _c, _d, _e, storageInfo, _f, _g;
+                var storageInfo, _a, _b, _c, _d, _e, _f, _g, e_1;
                 return __generator(this, function (_h) {
                     switch (_h.label) {
                         case 0:
                             console.log("cid recieved:", cid);
+                            _h.label = 1;
+                        case 1:
+                            _h.trys.push([1, 4, , 5]);
+                            console.log('entered si');
                             _b = (_a = console).log;
                             _c = ['storageInfo is'];
                             _e = (_d = JSON).stringify;
                             return [4 /*yield*/, this.storageAdapter.getStorageInfo(cid)];
-                        case 1:
+                        case 2:
                             _b.apply(_a, _c.concat([_e.apply(_d, [_h.sent()])]));
                             _g = (_f = JSON).stringify;
                             return [4 /*yield*/, this.storageAdapter.getStorageInfo(cid)];
-                        case 2:
+                        case 3:
                             storageInfo = _g.apply(_f, [_h.sent()]);
+                            return [3 /*break*/, 5];
+                        case 4:
+                            e_1 = _h.sent();
+                            console.log('entered catch');
+                            storageInfo = { storageInfo: 'no-deal-found' };
+                            return [3 /*break*/, 5];
+                        case 5:
                             // or with emit() and custom event names
                             socket.emit("storageInfo", storageInfo);
                             return [2 /*return*/];

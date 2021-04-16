@@ -32,9 +32,15 @@ class Powergate implements Provider {
   }
 
   async store(cid: string): Promise<string> {
-    // store the data using the default storage configuration
-    const { jobId } = await this.pow.storageConfig.apply(cid);
-    return jobId;
+    try {
+      let storageInfo = await this.getStorageInfo(cid);
+      console.log('already deal made with this cid');
+      return 'already deal made with this cid';
+    } catch (e) { // no storage info
+      // store the data using the default storage configuration
+      const { jobId } = await this.pow.storageConfig.apply(cid, { override: true });
+      return jobId;
+    }
   }
 
   watchJob(jobId: string, callback: Function): Function {

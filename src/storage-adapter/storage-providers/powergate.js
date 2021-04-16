@@ -72,13 +72,23 @@ var Powergate = /** @class */ (function () {
     };
     Powergate.prototype.store = function (cid) {
         return __awaiter(this, void 0, void 0, function () {
-            var jobId;
+            var storageInfo, e_1, jobId;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.pow.storageConfig.apply(cid)];
+                    case 0:
+                        _a.trys.push([0, 2, , 4]);
+                        return [4 /*yield*/, this.getStorageInfo(cid)];
                     case 1:
+                        storageInfo = _a.sent();
+                        console.log('already deal made with this cid');
+                        return [2 /*return*/, 'already deal made with this cid'];
+                    case 2:
+                        e_1 = _a.sent();
+                        return [4 /*yield*/, this.pow.storageConfig.apply(cid, { override: true })];
+                    case 3:
                         jobId = (_a.sent()).jobId;
                         return [2 /*return*/, jobId];
+                    case 4: return [2 /*return*/];
                 }
             });
         });
