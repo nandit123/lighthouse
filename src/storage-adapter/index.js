@@ -22,7 +22,7 @@ var StorageAdapter = /** @class */ (function () {
             // TODO: Log error
             throw Error("An Ethereum address should be passed as an argument in the store function");
         }
-        return this.storageProvider.store(address, cid);
+        return this.storageProvider.store(address, cid, config);
     };
     StorageAdapter.prototype.getStorageInfo = function (cid) {
         console.log('cid in storage-adapter');

@@ -31,15 +31,24 @@ class Powergate implements Provider {
     // this.pow.setToken(await this.token);
   }
 
-  async store(cid: string): Promise<string> {
+  async store(cid: string, config?: any): Promise<string> {
     try {
       let storageInfo = await this.getStorageInfo(cid);
       console.log('already deal made with this cid');
       return 'already deal made with this cid';
     } catch (e) { // no storage info
       // store the data using the default storage configuration
-      const { jobId } = await this.pow.storageConfig.apply(cid, { override: true });
-      return jobId;
+      if(config['default'] !== 'yes') {
+        // config exists
+        console.log('config exists:', config);
+        const { jobId } = await this.pow.storageConfig.apply(cid, { override: true, storageConfig: config });
+        return jobId
+      } else {
+        console.log('apply default config');
+        // take default config
+        const { jobId } = await this.pow.storageConfig.apply(cid, { override: true });
+        return jobId;
+      }
     }
   }
 

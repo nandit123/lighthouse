@@ -52,12 +52,12 @@ var StorageProvider = /** @class */ (function () {
         io.on("connection", function (client) { });
         io.listen(3000);
     }
-    StorageProvider.prototype.store = function (address, cid) {
+    StorageProvider.prototype.store = function (address, cid, config) {
         return __awaiter(this, void 0, void 0, function () {
             var jobId;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.powergate.store(cid)];
+                    case 0: return [4 /*yield*/, this.powergate.store(cid, config)];
                     case 1:
                         jobId = _a.sent();
                         // @todo store eth address somewhere along with the cid

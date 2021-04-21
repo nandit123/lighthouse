@@ -70,13 +70,13 @@ var Powergate = /** @class */ (function () {
             });
         });
     };
-    Powergate.prototype.store = function (cid) {
+    Powergate.prototype.store = function (cid, config) {
         return __awaiter(this, void 0, void 0, function () {
-            var storageInfo, e_1, jobId;
+            var storageInfo, e_1, jobId, jobId;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 2, , 4]);
+                        _a.trys.push([0, 2, , 7]);
                         return [4 /*yield*/, this.getStorageInfo(cid)];
                     case 1:
                         storageInfo = _a.sent();
@@ -84,11 +84,21 @@ var Powergate = /** @class */ (function () {
                         return [2 /*return*/, 'already deal made with this cid'];
                     case 2:
                         e_1 = _a.sent();
-                        return [4 /*yield*/, this.pow.storageConfig.apply(cid, { override: true })];
+                        if (!(config['default'] !== 'yes')) return [3 /*break*/, 4];
+                        // config exists
+                        console.log('config exists:', config);
+                        return [4 /*yield*/, this.pow.storageConfig.apply(cid, { override: true, storageConfig: config })];
                     case 3:
                         jobId = (_a.sent()).jobId;
                         return [2 /*return*/, jobId];
-                    case 4: return [2 /*return*/];
+                    case 4:
+                        console.log('apply default config');
+                        return [4 /*yield*/, this.pow.storageConfig.apply(cid, { override: true })];
+                    case 5:
+                        jobId = (_a.sent()).jobId;
+                        return [2 /*return*/, jobId];
+                    case 6: return [3 /*break*/, 7];
+                    case 7: return [2 /*return*/];
                 }
             });
         });

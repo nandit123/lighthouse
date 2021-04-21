@@ -22,7 +22,7 @@ var Vulcanize = /** @class */ (function () {
                 console.log('config:', res.data.listen.relatedNode.dataConfig);
                 console.log('address:', res.data.listen.relatedNode.dataUploader);
                 var cid = res.data.listen.relatedNode.dataCid;
-                var config = res.data.listen.relatedNode.dataConfig;
+                var config = JSON.parse(res.data.listen.relatedNode.dataConfig);
                 var address = '0x' + res.data.listen.relatedNode.dataUploader;
                 var jobId = _this.storageAdapter.store(address, cid, config);
                 console.log('cid:', res.data.listen.relatedNode.dataCid, '& jobId:', jobId);

@@ -22,8 +22,8 @@ class StorageProvider {
     io.listen(3000);
   }
 
-  async store(address: string, cid: string): Promise<string> {
-    const jobId = await this.powergate.store(cid);
+  async store(address: string, cid: string, config?: object): Promise<string> {
+    const jobId = await this.powergate.store(cid, config);
 
     // @todo store eth address somewhere along with the cid
 

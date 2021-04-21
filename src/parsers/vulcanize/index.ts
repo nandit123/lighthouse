@@ -40,7 +40,7 @@ class Vulcanize {
         console.log('config:', res.data.listen.relatedNode.dataConfig);
         console.log('address:', res.data.listen.relatedNode.dataUploader);
         let cid = res.data.listen.relatedNode.dataCid;
-        let config = res.data.listen.relatedNode.dataConfig;
+        let config = JSON.parse(res.data.listen.relatedNode.dataConfig);
         let address = '0x' + res.data.listen.relatedNode.dataUploader;
         const jobId = this.storageAdapter.store(address, cid, config);
         console.log('cid:', res.data.listen.relatedNode.dataCid, '& jobId:', jobId)
