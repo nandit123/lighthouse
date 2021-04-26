@@ -18,15 +18,15 @@ The Storage adapter:
 ## How to run
 
 1. Clone this repo
-2. Open a terminal window and run `npm install`
-3. To start the lighthouse node run `node src/index.js`
+2. Open a terminal window and run `> npm install`
+3. To start the lighthouse node run `> node src/index.js`
 
 Now the lighthouse node is up and running, feel free to run it locally on your system or host on a server. 
 
 This node also starts a socket.io server at port 3002 with which a socket.io client can interact to get the storage info of a file.
 
 Sample code for socket.io client 
-```
+```js
 const io = require("socket.io-client");
 const socket = io("ws://localhost:3002");
 
