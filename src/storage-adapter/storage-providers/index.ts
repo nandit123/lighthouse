@@ -53,6 +53,11 @@ class StorageProvider {
     console.log('cid in storage-provider');
     return this.powergate.getStorageInfo(cid);
   }
+
+  async retrieveFile(cid: string): Promise<Uint8Array> {
+    console.log('cid in storage-provider');
+    return this.powergate.retrieveFile(cid);
+  }
 }
 
 export default StorageProvider;

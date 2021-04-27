@@ -89,6 +89,14 @@ var StorageProvider = /** @class */ (function () {
             });
         });
     };
+    StorageProvider.prototype.retrieveFile = function (cid) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                console.log('cid in storage-provider');
+                return [2 /*return*/, this.powergate.retrieveFile(cid)];
+            });
+        });
+    };
     return StorageProvider;
 }());
 exports["default"] = StorageProvider;

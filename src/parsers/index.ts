@@ -1,7 +1,9 @@
 import Infura from "./infura";
 import Vulcanize from "./vulcanize";
 import StorageAdapter from "../storage-adapter";
+import { TextDecoder } from "util";
 const io = require("socket.io")(3002);
+const fs = require("fs");
 
 class Parser {
   config: any;
@@ -49,6 +51,23 @@ class Parser {
         // or with emit() and custom event names
         socket.emit("storageInfo", storageInfo);
       });
+
+      socket.on("retrieveFile", async (cid) => {
+        console.log("cid recieved:", cid);
+
+        let file;
+        try {
+          console.log('entered retrieveFile');
+          // console.log('storageInfo is', JSON.stringify(await this.storageAdapter.getStorageInfo(cid)));
+          file = (await this.storageAdapter.retrieveFile(cid)).buffer;
+        } catch(e) {
+          console.log('entered catch');
+          file = 'error';
+        }
+        // or with emit() and custom event names
+        socket.emit("retrieveFile", file);
+      });
+
     });
   }
 }

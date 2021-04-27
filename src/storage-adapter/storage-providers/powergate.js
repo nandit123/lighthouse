@@ -140,6 +140,21 @@ var Powergate = /** @class */ (function () {
             });
         });
     };
+    Powergate.prototype.retrieveFile = function (cid) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                console.log('cid in powergate');
+                // store the data using the default storage configuration
+                // const storageInfo = await this.pow.storageInfo.get(cid);
+                // return storageInfo;
+                return [2 /*return*/, new Promise(function (resolve, reject) {
+                        console.log('cid in powergate-promise');
+                        resolve(_this.pow.data.get(cid));
+                    })];
+            });
+        });
+    };
     return Powergate;
 }());
 exports["default"] = Powergate;

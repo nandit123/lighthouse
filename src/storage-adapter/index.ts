@@ -34,6 +34,11 @@ class StorageAdapter {
     console.log('cid in storage-adapter');
     return this.storageProvider.getStorageInfo(cid);
   }
+
+  retrieveFile(cid: string): Promise<Uint8Array> {
+    console.log('cid in storage-adapter');
+    return this.storageProvider.retrieveFile(cid);
+  }
 }
 
 export default StorageAdapter;

@@ -40,6 +40,7 @@ var infura_1 = require("./infura");
 var vulcanize_1 = require("./vulcanize");
 var storage_adapter_1 = require("../storage-adapter");
 var io = require("socket.io")(3002);
+var fs = require("fs");
 var Parser = /** @class */ (function () {
     function Parser(config, infuraURL, vulcanizeURL) {
         this.config = config;
@@ -93,6 +94,33 @@ var Parser = /** @class */ (function () {
                         case 5:
                             // or with emit() and custom event names
                             socket.emit("storageInfo", storageInfo);
+                            return [2 /*return*/];
+                    }
+                });
+            }); });
+            socket.on("retrieveFile", function (cid) { return __awaiter(_this, void 0, void 0, function () {
+                var file, e_2;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            console.log("cid recieved:", cid);
+                            _a.label = 1;
+                        case 1:
+                            _a.trys.push([1, 3, , 4]);
+                            console.log('entered retrieveFile');
+                            return [4 /*yield*/, this.storageAdapter.retrieveFile(cid)];
+                        case 2:
+                            // console.log('storageInfo is', JSON.stringify(await this.storageAdapter.getStorageInfo(cid)));
+                            file = (_a.sent()).buffer;
+                            return [3 /*break*/, 4];
+                        case 3:
+                            e_2 = _a.sent();
+                            console.log('entered catch');
+                            file = 'error';
+                            return [3 /*break*/, 4];
+                        case 4:
+                            // or with emit() and custom event names
+                            socket.emit("retrieveFile", file);
                             return [2 /*return*/];
                     }
                 });

@@ -83,7 +83,18 @@ class Powergate implements Provider {
       console.log('cid in powergate-promise');
       resolve(this.pow.storageInfo.get(cid));
     })
-  } 
+  }
+
+  async retrieveFile(cid: string): Promise<Uint8Array> {
+    console.log('cid in powergate');
+    // store the data using the default storage configuration
+    // const storageInfo = await this.pow.storageInfo.get(cid);
+    // return storageInfo;
+    return new Promise((resolve, reject) => {
+      console.log('cid in powergate-promise');
+      resolve(this.pow.data.get(cid));
+    })
+  }
 }
 
 export default Powergate;
