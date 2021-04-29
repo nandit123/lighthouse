@@ -44,3 +44,6 @@ socket.on("storageInfo", (storageInfo) => {
   console.log('storageInfo for cid:', storageInfo);
 });
 ```
+
+## Truffle box
+cd into a new directory into your system and run the following command > <code>truffle unbox nandit123/lighthouse</code>
