@@ -1,7 +1,6 @@
 # LightHouse Node ⛯
 This project provides a way for Ethereum smart contracts to request Filecoin storage of CIDs in IPFS via Powergate. Hence, Ethereum developers can use this to request verifiable storage of data to Filecoin from Ethereum smart contracts
 ![alt text](https://github.com/nandit123/lighthouse/blob/master/res/lighthouse.png?raw=true)
-> insert cool logo 😎
 
 The parser:
 
@@ -45,3 +44,6 @@ socket.on("storageInfo", (storageInfo) => {
   console.log('storageInfo for cid:', storageInfo);
 });
 ```
+
+## Truffle box
+cd into a new directory into your system and run the following command > <code>truffle unbox nandit123/lighthouse</code>
