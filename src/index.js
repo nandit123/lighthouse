@@ -13,21 +13,25 @@ var config = {
         host: powergateHost,
         config: {
             hot: {
-                enabled: true,
+                enabled: false,
                 allowUnfreeze: false,
-                ipfs: { addTimeout: 30 }
+                ipfs: { addTimeout: 900 },
+                unfreezeMaxPrice: 0
             },
             cold: {
                 enabled: true,
                 filecoin: {
                     repFactor: 1,
-                    dealMinDuration: 1000,
+                    dealMinDuration: 518400,
                     excludedMinersList: [],
                     trustedMinersList: [],
                     countryCodesList: [],
                     renew: { enabled: false, threshold: 0 },
-                    addr: "t3uznjltjse5r7736d3ish3khoh5doriczc6uosp3q675mvzqchvw6ids3isqj45xbvhlpxhsv2ffwk2lkvfgq",
-                    maxPrice: 0
+                    addr: "f3rpbm3bt4muydk3iq5ainss6phht4bjbe5dq6egrx4rwzqjgwc5eruyloozvf6qjunubo467neaqsvbzyxnna",
+                    maxPrice: 100000000000,
+                    fastRetrieval: true,
+                    dealStartOffset: 8640,
+                    verifiedDeal: false
                 }
             },
             repairable: false
