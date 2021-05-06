@@ -50,7 +50,7 @@ var StorageProvider = /** @class */ (function () {
     function StorageProvider(config) {
         this.powergate = new powergate_1["default"](config);
         io.on("connection", function (client) { });
-        io.listen(3000);
+        io.listen(3001);
     }
     StorageProvider.prototype.store = function (address, cid, config) {
         return __awaiter(this, void 0, void 0, function () {

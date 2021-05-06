@@ -41,8 +41,12 @@ class Powergate implements Provider {
       if(config['default'] !== 'yes') {
         // config exists
         console.log('config exists:', config);
-        const { jobId } = await this.pow.storageConfig.apply(cid, { override: true, storageConfig: config });
-        return jobId
+        try {
+          const { jobId } = await this.pow.storageConfig.apply(cid, { override: true, storageConfig: config });
+          return jobId
+        } catch (e) {
+          console.log('error in making a deal request:', e);
+        }
       } else {
         console.log('apply default config');
         // take default config

@@ -19,7 +19,7 @@ class StorageProvider {
   constructor(config: any) {
     this.powergate = new Powergate(config);
     io.on("connection", (client) => {});
-    io.listen(3000);
+    io.listen(3001);
   }
 
   async store(address: string, cid: string, config?: object): Promise<string> {
