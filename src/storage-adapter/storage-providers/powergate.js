@@ -143,7 +143,7 @@ var Powergate = /** @class */ (function () {
                 // return storageInfo;
                 return [2 /*return*/, new Promise(function (resolve, reject) {
                         console.log('cid in powergate-promise');
-                        resolve(_this.pow.storageInfo.get(cid));
+                        resolve(_this.pow.data.cidInfo(cid));
                     })];
             });
         });

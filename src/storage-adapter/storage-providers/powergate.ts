@@ -85,7 +85,7 @@ class Powergate implements Provider {
     // return storageInfo;
     return new Promise((resolve, reject) => {
       console.log('cid in powergate-promise');
-      resolve(this.pow.storageInfo.get(cid));
+      resolve(this.pow.data.cidInfo(cid));
     })
   }
 
