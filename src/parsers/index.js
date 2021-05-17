@@ -89,7 +89,7 @@ var Parser = /** @class */ (function () {
                         case 4:
                             e_1 = _h.sent();
                             console.log('entered catch');
-                            storageInfo = { storageInfo: 'no-deal-found' };
+                            storageInfo = { storageInfo: 'no-deal-found,' + e_1 };
                             return [3 /*break*/, 5];
                         case 5:
                             // or with emit() and custom event names

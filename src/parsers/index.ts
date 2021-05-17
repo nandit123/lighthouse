@@ -46,7 +46,7 @@ class Parser {
           storageInfo = JSON.stringify(await this.storageAdapter.getStorageInfo(cid));
         } catch(e) {
           console.log('entered catch');
-          storageInfo = { storageInfo: 'no-deal-found' }
+          storageInfo = { storageInfo: 'no-deal-found,' + e };
         }
         // or with emit() and custom event names
         socket.emit("storageInfo", storageInfo);
