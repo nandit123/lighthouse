@@ -31,7 +31,7 @@ var config = {
                     maxPrice: 100000000000,
                     fastRetrieval: true,
                     dealStartOffset: 8640,
-                    verifiedDeal: false
+                    verifiedDeal: true
                 }
             },
             repairable: false
