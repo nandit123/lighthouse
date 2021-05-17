@@ -10,8 +10,9 @@ class Powergate implements Provider {
   token: Promise<string>;
 
   constructor(config: PowergateConfig) {
-    this.pow = createPow(config.host);
-    // this.token = this.getUserToken();
+    console.log('constructor host:', config.host);
+    let host = config.host;
+    this.pow = createPow({ host });
     this.setUserToken();
   }
 
@@ -84,7 +85,7 @@ class Powergate implements Provider {
     // const storageInfo = await this.pow.storageInfo.get(cid);
     // return storageInfo;
     return new Promise((resolve, reject) => {
-      console.log('cid in powergate-promise');
+      console.log('cid:', cid);
       resolve(this.pow.data.cidInfo(cid));
     })
   }
