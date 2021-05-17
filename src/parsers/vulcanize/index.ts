@@ -18,8 +18,8 @@ const query = `subscription SubscriptionEvents {
   }`
   
 const client = new kik.GraphQLClient({
-  uri: 'http://localhost:5000/graphql',
-  wsUri: 'ws://localhost:5000/graphql',
+  uri: 'https://rinkeby-watcher.vdb.to/graphql',
+  wsUri: 'wss://rinkeby-watcher.vdb.to/graphql',
 });
 
 class Vulcanize {
