@@ -9,8 +9,8 @@ socket.on("message", data => {
 
 socket.on("connect", () => {
   // or with emit() and custom event names
-  // socket.emit("cid", "QmYEq9sWr1xaaSFyiXesWsvttyJ7S4J4jRxPKAVUpv7U85");
-  socket.emit("retrieveFile", "QmYEq9sWr1xaaSFyiXesWsvttyJ7S4J4jRxPKAVUpv7U85");
+  socket.emit("cid", "QmTJYDuVWNnRn6g4AjRE5adZ9GwTm7Sgu2Zj75a3xibDRJ");
+  // socket.emit("retrieveFile", "QmYEq9sWr1xaaSFyiXesWsvttyJ7S4J4jRxPKAVUpv7U85");
 });
 
 // handle the event sent with socket.emit()
