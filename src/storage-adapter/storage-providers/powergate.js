@@ -77,40 +77,37 @@ var Powergate = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        console.log('store pow:', this.pow.host);
-                        _a.label = 1;
-                    case 1:
-                        _a.trys.push([1, 3, , 11]);
+                        _a.trys.push([0, 2, , 10]);
                         return [4 /*yield*/, this.getStorageInfo(cid)];
-                    case 2:
+                    case 1:
                         storageInfo = _a.sent();
                         console.log('already deal made with this cid');
                         return [2 /*return*/, 'already deal made with this cid'];
-                    case 3:
+                    case 2:
                         e_1 = _a.sent();
-                        if (!(config['default'] !== 'yes')) return [3 /*break*/, 8];
+                        if (!(config['default'] !== 'yes')) return [3 /*break*/, 7];
                         // config exists
                         console.log('config exists:', config);
-                        _a.label = 4;
-                    case 4:
-                        _a.trys.push([4, 6, , 7]);
+                        _a.label = 3;
+                    case 3:
+                        _a.trys.push([3, 5, , 6]);
                         return [4 /*yield*/, this.pow.storageConfig.apply(cid, { override: true, storageConfig: config })];
-                    case 5:
+                    case 4:
                         jobId = (_a.sent()).jobId;
                         return [2 /*return*/, jobId];
-                    case 6:
+                    case 5:
                         e_2 = _a.sent();
                         console.log('error in making a deal request:', e_2);
-                        return [3 /*break*/, 7];
-                    case 7: return [3 /*break*/, 10];
-                    case 8:
+                        return [3 /*break*/, 6];
+                    case 6: return [3 /*break*/, 9];
+                    case 7:
                         console.log('apply default config');
                         return [4 /*yield*/, this.pow.storageConfig.apply(cid, { override: true })];
-                    case 9:
+                    case 8:
                         jobId = (_a.sent()).jobId;
                         return [2 /*return*/, jobId];
-                    case 10: return [3 /*break*/, 11];
-                    case 11: return [2 /*return*/];
+                    case 9: return [3 /*break*/, 10];
+                    case 10: return [2 /*return*/];
                 }
             });
         });
