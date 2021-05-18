@@ -1,5 +1,7 @@
 const io = require("socket.io-client");
-const socket = io("ws://localhost:3002");
+// const socket = io("ws://localhost:3002"); //local
+const socket = io("ws://13.126.82.18:3002"); // hosted
+
 const fs = require("fs");
 
 // handle the event sent with socket.send()
@@ -10,7 +12,7 @@ socket.on("message", data => {
 socket.on("connect", () => {
   // or with emit() and custom event names
   socket.emit("cid", "QmTJYDuVWNnRn6g4AjRE5adZ9GwTm7Sgu2Zj75a3xibDRJ");
-  // socket.emit("retrieveFile", "QmYEq9sWr1xaaSFyiXesWsvttyJ7S4J4jRxPKAVUpv7U85");
+  // socket.emit("retrieveFile", "QmcpabSYeXqNQ3hPyr5vefGbxnqkDmCD5pWm4RRoQoMor4");
 });
 
 // handle the event sent with socket.emit()
