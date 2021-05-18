@@ -3,8 +3,8 @@ exports.__esModule = true;
 var kik = require('kikstart-graphql-client');
 var query = "subscription SubscriptionEvents {\n    listen(topic: \"events\") {\n      relatedNode {\n        ... on ContractId1EventId1 {\n          eventId\n          mhKey\n          dataUploader\n          dataCid\n          dataConfig\n          id\n          headerId\n        }\n      }\n    }\n  }";
 var client = new kik.GraphQLClient({
-    uri: 'https://rinkeby-watcher.vdb.to/graphql',
-    wsUri: 'wss://rinkeby-watcher.vdb.to/graphql'
+    uri: 'https://lighthouse.vdb.to/graphql',
+    wsUri: 'wss://lighthouse.vdb.to/graphql'
 });
 var Vulcanize = /** @class */ (function () {
     function Vulcanize(url, storageAdapter) {
