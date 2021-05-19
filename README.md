@@ -45,5 +45,27 @@ socket.on("storageInfo", (storageInfo) => {
 });
 ```
 
-## Truffle box
-cd into a new directory into your system and run the following command > <code>truffle unbox nandit123/lighthouse</code>
+## Use Truffle box to Interact with Lighthouse
+- make a new directory - <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>mkdir lighthouse</code><br>
+- cd into that - <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>cd lighthouse</code><br>
+- run the following command - <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>truffle unbox nandit123/lighthouse</code><br>
+- Install the packages - <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>npm i</code><br>
+- Compile Smart Contracts - <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>truffle compile</code><br>
+- Migrate and Deploy - <br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>truffle migrate --network rinkeby</code><br>
+- Now start truffle console using - <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>truffle console</code><br>
+- Run the following command to get the instance of the deployed smart contract - <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>let specificInstance = await FPS.at("0xdFEa08D7c2B43498Bfe32778334c9279956057F0");</code><br>
+- Now run this command to store data to filecoin - <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>let result = specificInstance.store("sampleCid", "SampleConfig");</code><br>
+- You can get the transaction hash of the previous call by typing in - <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>result</code><br>
+
+- To get the storageInfo replace your cid in the client.js file and run - <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>node client.js</code>
