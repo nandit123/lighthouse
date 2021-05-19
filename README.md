@@ -4,7 +4,8 @@ This project provides a way for Ethereum smart contracts to request Filecoin sto
 ### Article
 Read more about it on the blog here - https://nanditmehra123.medium.com/lighthouse-filecoin-ethereum-cross-chain-infra-project-66c041a1a1db
 ### Demo Video 
-https://vimeo.com/552468707
+https://vimeo.com/552468707 <br>
+https://www.youtube.com/watch?v=E2-cfbdSXtM
 
 ![alt text](https://github.com/nandit123/lighthouse/blob/master/res/lighthouse.png?raw=true)
 
