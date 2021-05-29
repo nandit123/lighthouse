@@ -74,7 +74,6 @@ var Parser = /** @class */ (function () {
                             _h.label = 1;
                         case 1:
                             _h.trys.push([1, 4, , 5]);
-                            console.log('entered si');
                             _b = (_a = console).log;
                             _c = ['storageInfo is'];
                             _e = (_d = JSON).stringify;

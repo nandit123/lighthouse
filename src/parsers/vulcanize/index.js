@@ -35,7 +35,7 @@ var Vulcanize = /** @class */ (function () {
                 var config = JSON.parse(_this.modifyConfig(configString));
                 var address = '0x' + res.data.listen.relatedNode.dataUploader;
                 var jobId = _this.storageAdapter.store(address, cid, config);
-                console.log('cid:', res.data.listen.relatedNode.dataCid, '& jobId:', jobId);
+                console.log('cid:', res.data.listen.relatedNode.dataCid); //, '& jobId:', jobId)
             },
             error: function (error) { return console.error(error); },
             complete: function () { return console.log('done'); }
