@@ -11,13 +11,12 @@ https://www.youtube.com/watch?v=E2-cfbdSXtM
 
 ![alt text](https://github.com/nandit123/lighthouse/blob/master/res/lighthouse.png?raw=true)
 
-The parser:
+<b>The parser</b> at src/parser:
 
-1. Takes data feed from external sources (Infura, VulcanizeDB).
-2. Optionally stores the data feed (in case of Infura).
-3. Parses the data feed into a set of parameters which can be passed to the storage-adapter.
+1. Takes data feed from external sources VulcanizeDB.
+2. Parses the data feed into a set of parameters which can be passed to the storage-adapter.
 
-The Storage adapter:
+<b>The Storage adapter</b> at src/storage-adapter:
 
 1. Accepts the arguments passed from the parser. (storage adapter is modular enough to be taken out of this repo and used as an dependency. It can be used by any other project.)
 2. Uses the arguments passed to store the data (cid) according to the config.
