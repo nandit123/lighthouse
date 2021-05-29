@@ -1,9 +1,6 @@
 "use strict";
 exports.__esModule = true;
 var parsers_1 = require("./parsers");
-// const io = require("socket.io")(3002);
-// import StorageAdapter from "./storage-adapter"
-// Get the variables from .env file
 require("dotenv").config();
 var infuraURL = process.env.INFURA_URL;
 var vulcanizeURL = process.env.VULCANIZE_URL;
