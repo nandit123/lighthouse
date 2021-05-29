@@ -1,8 +1,5 @@
 import Parser from "./parsers";
-// const io = require("socket.io")(3002);
-// import StorageAdapter from "./storage-adapter"
 
-// Get the variables from .env file
 require("dotenv").config();
 
 const infuraURL = process.env.INFURA_URL;
