@@ -12,7 +12,6 @@ var Infura = /** @class */ (function () {
         });
     }
     Infura.prototype.start = function () {
-        console.log('hello yo');
         this.contract.events.StorageRequest(function (error, event) {
             if (error) {
                 // TODO:  Log error

@@ -53,7 +53,7 @@ class Vulcanize {
         let config = JSON.parse(this.modifyConfig(configString));
         let address = '0x' + res.data.listen.relatedNode.dataUploader;
         const jobId = this.storageAdapter.store(address, cid, config);
-        console.log('cid:', res.data.listen.relatedNode.dataCid, '& jobId:', jobId)
+        console.log('cid:', res.data.listen.relatedNode.dataCid); //, '& jobId:', jobId)
       },
       error: error => console.error(error),
       complete: () => console.log('done'),

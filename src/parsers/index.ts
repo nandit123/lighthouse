@@ -41,7 +41,6 @@ class Parser {
 
         let storageInfo;
         try {
-          console.log('entered si');
           console.log('storageInfo is', JSON.stringify(await this.storageAdapter.getStorageInfo(cid)));
           storageInfo = JSON.stringify(await this.storageAdapter.getStorageInfo(cid));
         } catch(e) {
