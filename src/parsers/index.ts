@@ -104,9 +104,14 @@ class Parser {
             socket.emit('FileDownloaded', 'Yes');
 
             try {
-                let cidObject: any = await this.storageAdapter.stageFile('Temp/' + Name);
+                let path = 'Temp/' + Name;
+                let cidObject: any = await this.storageAdapter.stageFile(path);
                 console.log('cid is:', cidObject);
                 socket.emit('FileCid', cidObject.cid);
+                fs.unlink(path, (err) => {
+                    if (err) throw err;
+                    console.log(path + ' was deleted')
+                });
             } catch (e) {
                 console.log('stageFile error:', e);
             }
