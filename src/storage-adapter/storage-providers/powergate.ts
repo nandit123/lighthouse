@@ -5,6 +5,8 @@ import { Pow } from "@textile/powergate-client/dist/index"
 import Provider from "./provider";
 import { PowergateConfig, Data } from "../interfaces";
 
+const fs = require("fs");
+
 class Powergate implements Provider {
   pow: Pow;
   token: Promise<string>;
@@ -67,6 +69,16 @@ class Powergate implements Provider {
     return new Promise((resolve, reject) => {
       console.log('cid in powergate-promise');
       resolve(this.pow.storageInfo.get(cid));
+    })
+  }
+
+  async stageFile(path: string): Promise<object> {
+    console.log('path in powergate');
+    return new Promise((resolve, reject) => {
+      console.log('path in powergate-promise');
+       // cache data in IPFS in preparation to store it
+      const buffer = fs.readFileSync(path)
+      resolve(this.pow.data.stage(buffer));
     })
   } 
 }

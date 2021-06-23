@@ -34,6 +34,11 @@ class StorageAdapter {
     console.log('cid in storage-adapter');
     return this.storageProvider.getStorageInfo(cid);
   }
+
+  stageFile(path: string): Promise<object> {
+    console.log('path in storage-adapter');
+    return this.storageProvider.stageFile(path);
+  }
 }
 
 export default StorageAdapter;

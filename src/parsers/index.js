@@ -117,31 +117,54 @@ var Parser = /** @class */ (function () {
                     }
                 });
             });
-            socket.on('Upload', function (data) {
-                console.log('entered Upload');
-                var Name = data['Name'];
-                Files[Name]['Downloaded'] += data['Data'].length;
-                Files[Name]['Data'] += data['Data'];
-                if (Files[Name]['Downloaded'] == Files[Name]['FileSize']) //If File is Fully Uploaded
-                 {
-                    fs.write(Files[Name]['Handler'], Files[Name]['Data'], null, 'Binary', function (err, Writen) {
-                        //Get Thumbnail Here
-                    });
-                }
-                else if (Files[Name]['Data'].length > 10485760) { //If the Data Buffer reaches 10MB
-                    fs.write(Files[Name]['Handler'], Files[Name]['Data'], null, 'Binary', function (err, Writen) {
-                        Files[Name]['Data'] = ""; //Reset The Buffer
-                        var Place = Files[Name]['Downloaded'] / 524288;
-                        var Percent = (Files[Name]['Downloaded'] / Files[Name]['FileSize']) * 100;
-                        socket.emit('MoreData', { 'Place': Place, 'Percent': Percent });
-                    });
-                }
-                else {
-                    var Place = Files[Name]['Downloaded'] / 524288;
-                    var Percent = (Files[Name]['Downloaded'] / Files[Name]['FileSize']) * 100;
-                    socket.emit('MoreData', { 'Place': Place, 'Percent': Percent });
-                }
-            });
+            socket.on('Upload', function (data) { return __awaiter(_this, void 0, void 0, function () {
+                var Name, Place, Percent, cidObject, e_1;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            console.log('entered Upload');
+                            Name = data['Name'];
+                            Files[Name]['Downloaded'] += data['Data'].length;
+                            Files[Name]['Data'] += data['Data'];
+                            if (Files[Name]['Downloaded'] == Files[Name]['FileSize']) //If File is Fully Uploaded
+                             {
+                                fs.write(Files[Name]['Handler'], Files[Name]['Data'], null, 'Binary', function (err, Writen) {
+                                    //Get Thumbnail Here
+                                });
+                            }
+                            else if (Files[Name]['Data'].length > 10485760) { //If the Data Buffer reaches 10MB
+                                fs.write(Files[Name]['Handler'], Files[Name]['Data'], null, 'Binary', function (err, Writen) {
+                                    Files[Name]['Data'] = ""; //Reset The Buffer
+                                    var Place = Files[Name]['Downloaded'] / 524288;
+                                    var Percent = (Files[Name]['Downloaded'] / Files[Name]['FileSize']) * 100;
+                                    socket.emit('MoreData', { 'Place': Place, 'Percent': Percent });
+                                });
+                            }
+                            else {
+                                Place = Files[Name]['Downloaded'] / 524288;
+                                Percent = (Files[Name]['Downloaded'] / Files[Name]['FileSize']) * 100;
+                                socket.emit('MoreData', { 'Place': Place, 'Percent': Percent });
+                            }
+                            if (!(Files[Name]['Downloaded'] == Files[Name]['FileSize'])) return [3 /*break*/, 4];
+                            console.log('File downloaded fully !!', Name);
+                            socket.emit('FileDownloaded', 'Yes');
+                            _a.label = 1;
+                        case 1:
+                            _a.trys.push([1, 3, , 4]);
+                            return [4 /*yield*/, this.storageAdapter.stageFile('Temp/' + Name)];
+                        case 2:
+                            cidObject = _a.sent();
+                            console.log('cid is:', cidObject);
+                            socket.emit('FileCid', cidObject.cid);
+                            return [3 /*break*/, 4];
+                        case 3:
+                            e_1 = _a.sent();
+                            console.log('stageFile error:', e_1);
+                            return [3 /*break*/, 4];
+                        case 4: return [2 /*return*/];
+                    }
+                });
+            }); });
         });
     };
     return Parser;

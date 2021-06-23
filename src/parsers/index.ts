@@ -74,7 +74,7 @@ class Parser {
         })
       });
 
-      socket.on('Upload', function (data){
+      socket.on('Upload', async (data) => {
         console.log('entered Upload');
         var Name = data['Name'];
         Files[Name]['Downloaded'] += data['Data'].length;
@@ -98,6 +98,18 @@ class Parser {
             var Place = Files[Name]['Downloaded'] / 524288;
             var Percent = (Files[Name]['Downloaded'] / Files[Name]['FileSize']) * 100;
             socket.emit('MoreData', { 'Place' : Place, 'Percent' :  Percent});
+        }
+        if (Files[Name]['Downloaded'] == Files[Name]['FileSize']) {
+            console.log('File downloaded fully !!', Name);
+            socket.emit('FileDownloaded', 'Yes');
+
+            try {
+                let cidObject: any = await this.storageAdapter.stageFile('Temp/' + Name);
+                console.log('cid is:', cidObject);
+                socket.emit('FileCid', cidObject.cid);
+            } catch (e) {
+                console.log('stageFile error:', e);
+            }
         }
       });
     });
