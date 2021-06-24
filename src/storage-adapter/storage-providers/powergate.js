@@ -37,6 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 var powergate_client_1 = require("@textile/powergate-client");
+var fs = require("fs");
 var Powergate = /** @class */ (function () {
     function Powergate(config) {
         console.log('constructor host:', config.host);
@@ -160,6 +161,20 @@ var Powergate = /** @class */ (function () {
                 return [2 /*return*/, new Promise(function (resolve, reject) {
                         console.log('cid in powergate-promise');
                         resolve(_this.pow.data.get(cid));
+                    })];
+            });
+        });
+    };
+    Powergate.prototype.stageFile = function (path) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                console.log('path in powergate');
+                return [2 /*return*/, new Promise(function (resolve, reject) {
+                        console.log('path in powergate-promise');
+                        // cache data in IPFS in preparation to store it
+                        var buffer = fs.readFileSync(path);
+                        resolve(_this.pow.data.stage(buffer));
                     })];
             });
         });
