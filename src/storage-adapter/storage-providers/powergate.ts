@@ -12,8 +12,9 @@ class Powergate implements Provider {
   token: Promise<string>;
 
   constructor(config: PowergateConfig) {
-    this.pow = createPow(config.host);
-    // this.token = this.getUserToken();
+    console.log('constructor host:', config.host);
+    let host = config.host;
+    this.pow = createPow({ host });
     this.setUserToken();
   }
 
@@ -33,10 +34,29 @@ class Powergate implements Provider {
     // this.pow.setToken(await this.token);
   }
 
-  async store(cid: string): Promise<string> {
-    // store the data using the default storage configuration
-    const { jobId } = await this.pow.storageConfig.apply(cid);
-    return jobId;
+  async store(cid: string, config?: any): Promise<string> {
+    try {
+      let storageInfo = await this.getStorageInfo(cid);
+      console.log('already deal made with this cid');
+      return 'already deal made with this cid';
+    } catch (e) { // no storage info
+      // store the data using the default storage configuration
+      if(config['default'] !== 'yes') {
+        // config exists
+        console.log('config exists:', config);
+        try {
+          const { jobId } = await this.pow.storageConfig.apply(cid, { override: true, storageConfig: config });
+          return jobId
+        } catch (e) {
+          console.log('error in making a deal request:', e);
+        }
+      } else {
+        console.log('apply default config');
+        // take default config
+        const { jobId } = await this.pow.storageConfig.apply(cid, { override: true });
+        return jobId;
+      }
+    }
   }
 
   watchJob(jobId: string, callback: Function): Function {
@@ -67,8 +87,19 @@ class Powergate implements Provider {
     // const storageInfo = await this.pow.storageInfo.get(cid);
     // return storageInfo;
     return new Promise((resolve, reject) => {
+      console.log('cid:', cid);
+      resolve(this.pow.data.cidInfo(cid));
+    })
+  }
+
+  async retrieveFile(cid: string): Promise<Uint8Array> {
+    console.log('cid in powergate');
+    // store the data using the default storage configuration
+    // const storageInfo = await this.pow.storageInfo.get(cid);
+    // return storageInfo;
+    return new Promise((resolve, reject) => {
       console.log('cid in powergate-promise');
-      resolve(this.pow.storageInfo.get(cid));
+      resolve(this.pow.data.get(cid));
     })
   }
 

@@ -2,7 +2,7 @@ import { StorageConfig } from "@textile/grpc-powergate-client/dist/powergate/use
 import { Config } from "@textile/powergate-client/dist/index";
 
 export interface PowergateConfig {
-  host: Partial<Config>;
+  host: string;
   config: StorageConfig.AsObject;
 }
 

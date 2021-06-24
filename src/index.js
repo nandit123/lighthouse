@@ -1,9 +1,6 @@
 "use strict";
 exports.__esModule = true;
 var parsers_1 = require("./parsers");
-// const io = require("socket.io")(3002);
-// import StorageAdapter from "./storage-adapter"
-// Get the variables from .env file
 require("dotenv").config();
 var infuraURL = process.env.INFURA_URL;
 var vulcanizeURL = process.env.VULCANIZE_URL;
@@ -14,20 +11,24 @@ var config = {
         config: {
             hot: {
                 enabled: true,
-                allowUnfreeze: false,
-                ipfs: { addTimeout: 30 }
+                allowUnfreeze: true,
+                ipfs: { addTimeout: "900" },
+                unfreezeMaxPrice: "0"
             },
             cold: {
                 enabled: true,
                 filecoin: {
-                    repFactor: 1,
-                    dealMinDuration: 1000,
-                    excludedMinersList: [],
-                    trustedMinersList: [],
-                    countryCodesList: [],
-                    renew: { enabled: false, threshold: 0 },
-                    addr: "t3uznjltjse5r7736d3ish3khoh5doriczc6uosp3q675mvzqchvw6ids3isqj45xbvhlpxhsv2ffwk2lkvfgq",
-                    maxPrice: 0
+                    replicationFactor: "1",
+                    dealMinDuration: "518400",
+                    excludedMiners: [],
+                    trustedMiners: ["f01240", "f0678914", "f022352", "f010446", "f02576"],
+                    countryCodes: [],
+                    renew: { enabled: true, threshold: "1" },
+                    address: "f3rpbm3bt4muydk3iq5ainss6phht4bjbe5dq6egrx4rwzqjgwc5eruyloozvf6qjunubo467neaqsvbzyxnna",
+                    maxPrice: "100000000000",
+                    fastRetrieval: true,
+                    dealStartOffset: "8640",
+                    verifiedDeal: true
                 }
             },
             repairable: false
@@ -38,17 +39,3 @@ var config = {
 var parser = new parsers_1["default"](config, infuraURL, vulcanizeURL);
 parser.start();
 parser.socket();
-// io.on("connection", socket => {
-//   // either with send()
-//   socket.send("Welcome to Lighthouse!");
-//   var storageInfo;
-//   // handle the event sent with socket.emit()
-//   socket.on("cid", (cid) => {
-//     console.log("cid recieved:", cid);
-//     let storageAdapter = new StorageAdapter(config);
-//     storageInfo = storageAdapter.getStorageInfo(cid);
-//     console.log('storageInfo is', storageInfo);
-//     // or with emit() and custom event names
-//     socket.emit("storageInfo", "this is some storage info");
-//   });
-// });
