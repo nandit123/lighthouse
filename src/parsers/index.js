@@ -127,7 +127,7 @@ var Parser = /** @class */ (function () {
                 });
             });
             socket.on('Upload', function (data) { return __awaiter(_this, void 0, void 0, function () {
-                var Name, Place, Percent, path_1, cidObject, e_1;
+                var Name, Place, Percent, path_1, cidObject, e_2;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
@@ -173,15 +173,15 @@ var Parser = /** @class */ (function () {
                             });
                             return [3 /*break*/, 4];
                         case 3:
-                            e_1 = _a.sent();
-                            console.log('stageFile error:', e_1);
+                            e_2 = _a.sent();
+                            console.log('stageFile error:', e_2);
                             return [3 /*break*/, 4];
                         case 4: return [2 /*return*/];
                     }
                 });
-            }); });                                
+            }); });
             socket.on("retrieveFile", function (cid) { return __awaiter(_this, void 0, void 0, function () {
-                var file, e_2;
+                var file, e_3;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
@@ -196,7 +196,7 @@ var Parser = /** @class */ (function () {
                             file = (_a.sent()).buffer;
                             return [3 /*break*/, 4];
                         case 3:
-                            e_2 = _a.sent();
+                            e_3 = _a.sent();
                             console.log('entered catch');
                             file = 'error';
                             return [3 /*break*/, 4];
