@@ -19,11 +19,11 @@ class StorageProvider {
   constructor(config: any) {
     this.powergate = new Powergate(config);
     io.on("connection", (client) => {});
-    io.listen(3000);
+    io.listen(3001);
   }
 
-  async store(address: string, cid: string): Promise<string> {
-    const jobId = await this.powergate.store(cid);
+  async store(address: string, cid: string, config?: object): Promise<string> {
+    const jobId = await this.powergate.store(cid, config);
 
     // @todo store eth address somewhere along with the cid
 
@@ -57,6 +57,11 @@ class StorageProvider {
   async stageFile(path: string): Promise<object> {
     console.log('path in storage-provider');
     return this.powergate.stageFile(path);
+  }
+
+  async retrieveFile(cid: string): Promise<Uint8Array> {
+    console.log('cid in storage-provider');
+    return this.powergate.retrieveFile(cid);
   }
 }
 

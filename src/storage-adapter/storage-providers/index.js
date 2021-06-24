@@ -50,14 +50,14 @@ var StorageProvider = /** @class */ (function () {
     function StorageProvider(config) {
         this.powergate = new powergate_1["default"](config);
         io.on("connection", function (client) { });
-        io.listen(3000);
+        io.listen(3001);
     }
-    StorageProvider.prototype.store = function (address, cid) {
+    StorageProvider.prototype.store = function (address, cid, config) {
         return __awaiter(this, void 0, void 0, function () {
             var jobId;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.powergate.store(cid)];
+                    case 0: return [4 /*yield*/, this.powergate.store(cid, config)];
                     case 1:
                         jobId = _a.sent();
                         // @todo store eth address somewhere along with the cid
@@ -94,6 +94,14 @@ var StorageProvider = /** @class */ (function () {
             return __generator(this, function (_a) {
                 console.log('path in storage-provider');
                 return [2 /*return*/, this.powergate.stageFile(path)];
+            });
+        });
+    };
+    StorageProvider.prototype.retrieveFile = function (cid) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                console.log('cid in storage-provider');
+                return [2 /*return*/, this.powergate.retrieveFile(cid)];
             });
         });
     };

@@ -27,7 +27,7 @@ class StorageAdapter {
         "An Ethereum address should be passed as an argument in the store function"
       );
     }
-    return this.storageProvider.store(address, cid);
+    return this.storageProvider.store(address, cid, config);
   }
 
   getStorageInfo(cid: string): Promise<object> {
@@ -38,6 +38,11 @@ class StorageAdapter {
   stageFile(path: string): Promise<object> {
     console.log('path in storage-adapter');
     return this.storageProvider.stageFile(path);
+  }
+
+  retrieveFile(cid: string): Promise<Uint8Array> {
+    console.log('cid in storage-adapter');
+    return this.storageProvider.retrieveFile(cid);
   }
 }
 

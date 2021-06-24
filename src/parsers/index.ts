@@ -1,6 +1,7 @@
 import Infura from "./infura";
 import Vulcanize from "./vulcanize";
 import StorageAdapter from "../storage-adapter";
+import { TextDecoder } from "util";
 const io = require("socket.io")(3002);
 const fs = require("fs");
 
@@ -36,13 +37,18 @@ class Parser {
       // either with send()
       socket.send("Welcome to Lighthouse!");
   
-      var storageInfo;
       // handle the event sent with socket.emit()
       socket.on("cid", async (cid) => {
         console.log("cid recieved:", cid);
 
-        console.log('storageInfo is', JSON.stringify(await this.storageAdapter.getStorageInfo(cid)));
-        let storageInfo = JSON.stringify(await this.storageAdapter.getStorageInfo(cid));
+        let storageInfo;
+        try {
+          console.log('storageInfo is', JSON.stringify(await this.storageAdapter.getStorageInfo(cid)));
+          storageInfo = JSON.stringify(await this.storageAdapter.getStorageInfo(cid));
+        } catch(e) {
+          console.log('entered catch');
+          storageInfo = { storageInfo: 'no-deal-found,' + e };
+        }
         // or with emit() and custom event names
         socket.emit("storageInfo", storageInfo);
       });
@@ -116,6 +122,22 @@ class Parser {
                 console.log('stageFile error:', e);
             }
         }
+      });
+
+      socket.on("retrieveFile", async (cid) => {
+        console.log("cid recieved:", cid);
+
+        let file;
+        try {
+          console.log('entered retrieveFile');
+          // console.log('storageInfo is', JSON.stringify(await this.storageAdapter.getStorageInfo(cid)));
+          file = (await this.storageAdapter.retrieveFile(cid)).buffer;
+        } catch(e) {
+          console.log('entered catch');
+          file = 'error';
+        }
+        // or with emit() and custom event names
+        socket.emit("retrieveFile", file);
       });
     });
   }

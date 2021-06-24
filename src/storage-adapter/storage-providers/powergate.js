@@ -40,8 +40,9 @@ var powergate_client_1 = require("@textile/powergate-client");
 var fs = require("fs");
 var Powergate = /** @class */ (function () {
     function Powergate(config) {
-        this.pow = powergate_client_1.createPow(config.host);
-        // this.token = this.getUserToken();
+        console.log('constructor host:', config.host);
+        var host = config.host;
+        this.pow = powergate_client_1.createPow({ host: host });
         this.setUserToken();
     }
     Powergate.prototype.getUserToken = function () {
@@ -71,15 +72,43 @@ var Powergate = /** @class */ (function () {
             });
         });
     };
-    Powergate.prototype.store = function (cid) {
+    Powergate.prototype.store = function (cid, config) {
         return __awaiter(this, void 0, void 0, function () {
-            var jobId;
+            var storageInfo, e_1, jobId, e_2, jobId;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.pow.storageConfig.apply(cid)];
+                    case 0:
+                        _a.trys.push([0, 2, , 10]);
+                        return [4 /*yield*/, this.getStorageInfo(cid)];
                     case 1:
+                        storageInfo = _a.sent();
+                        console.log('already deal made with this cid');
+                        return [2 /*return*/, 'already deal made with this cid'];
+                    case 2:
+                        e_1 = _a.sent();
+                        if (!(config['default'] !== 'yes')) return [3 /*break*/, 7];
+                        // config exists
+                        console.log('config exists:', config);
+                        _a.label = 3;
+                    case 3:
+                        _a.trys.push([3, 5, , 6]);
+                        return [4 /*yield*/, this.pow.storageConfig.apply(cid, { override: true, storageConfig: config })];
+                    case 4:
                         jobId = (_a.sent()).jobId;
                         return [2 /*return*/, jobId];
+                    case 5:
+                        e_2 = _a.sent();
+                        console.log('error in making a deal request:', e_2);
+                        return [3 /*break*/, 6];
+                    case 6: return [3 /*break*/, 9];
+                    case 7:
+                        console.log('apply default config');
+                        return [4 /*yield*/, this.pow.storageConfig.apply(cid, { override: true })];
+                    case 8:
+                        jobId = (_a.sent()).jobId;
+                        return [2 /*return*/, jobId];
+                    case 9: return [3 /*break*/, 10];
+                    case 10: return [2 /*return*/];
                 }
             });
         });
@@ -115,8 +144,23 @@ var Powergate = /** @class */ (function () {
                 // const storageInfo = await this.pow.storageInfo.get(cid);
                 // return storageInfo;
                 return [2 /*return*/, new Promise(function (resolve, reject) {
+                        console.log('cid:', cid);
+                        resolve(_this.pow.data.cidInfo(cid));
+                    })];
+            });
+        });
+    };
+    Powergate.prototype.retrieveFile = function (cid) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                console.log('cid in powergate');
+                // store the data using the default storage configuration
+                // const storageInfo = await this.pow.storageInfo.get(cid);
+                // return storageInfo;
+                return [2 /*return*/, new Promise(function (resolve, reject) {
                         console.log('cid in powergate-promise');
-                        resolve(_this.pow.storageInfo.get(cid));
+                        resolve(_this.pow.data.get(cid));
                     })];
             });
         });
