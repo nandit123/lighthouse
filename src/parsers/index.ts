@@ -87,25 +87,8 @@ class Parser {
         Files[Name]['Data'] += data['Data'];
         if(Files[Name]['Downloaded'] == Files[Name]['FileSize']) //If File is Fully Uploaded
         {
-            fs.write(Files[Name]['Handler'], Files[Name]['Data'], null, 'Binary', function(err, Writen){
-                //Get Thumbnail Here
-            });
-        }
-        else if(Files[Name]['Data'].length > 10485760){ //If the Data Buffer reaches 10MB
-            fs.write(Files[Name]['Handler'], Files[Name]['Data'], null, 'Binary', function(err, Writen){
-                Files[Name]['Data'] = ""; //Reset The Buffer
-                var Place = Files[Name]['Downloaded'] / 524288;
-                var Percent = (Files[Name]['Downloaded'] / Files[Name]['FileSize']) * 100;
-                socket.emit('MoreData', { 'Place' : Place, 'Percent' :  Percent});
-            });
-        }
-        else
-        {
-            var Place = Files[Name]['Downloaded'] / 524288;
-            var Percent = (Files[Name]['Downloaded'] / Files[Name]['FileSize']) * 100;
-            socket.emit('MoreData', { 'Place' : Place, 'Percent' :  Percent});
-        }
-        if (Files[Name]['Downloaded'] == Files[Name]['FileSize']) {
+          await fs.write(Files[Name]['Handler'], Files[Name]['Data'], null, 'Binary', async (err, Writen) => {
+            //Get Thumbnail Here
             console.log('File downloaded fully !!', Name);
             socket.emit('FileDownloaded', 'Yes');
 
@@ -121,6 +104,21 @@ class Parser {
             } catch (e) {
                 console.log('stageFile error:', e);
             }
+          });
+        }
+        else if(Files[Name]['Data'].length > 10485760){ //If the Data Buffer reaches 10MB
+            await fs.write(Files[Name]['Handler'], Files[Name]['Data'], null, 'Binary', function(err, Writen){
+                Files[Name]['Data'] = ""; //Reset The Buffer
+                var Place = Files[Name]['Downloaded'] / 524288;
+                var Percent = (Files[Name]['Downloaded'] / Files[Name]['FileSize']) * 100;
+                socket.emit('MoreData', { 'Place' : Place, 'Percent' :  Percent});
+            });
+        }
+        else
+        {
+            var Place = Files[Name]['Downloaded'] / 524288;
+            var Percent = (Files[Name]['Downloaded'] / Files[Name]['FileSize']) * 100;
+            socket.emit('MoreData', { 'Place' : Place, 'Percent' :  Percent});
         }
       });
 
