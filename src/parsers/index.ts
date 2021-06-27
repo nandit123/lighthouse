@@ -96,7 +96,7 @@ class Parser {
                 let path = 'Temp/' + Name;
                 let cidObject: any = await this.storageAdapter.stageFile(path);
                 console.log('cid is:', cidObject);
-                socket.emit('FileCid', cidObject.cid);
+                socket.emit('FileCid', {cid: cidObject.cid, name: Name});
                 fs.unlink(path, (err) => {
                     if (err) throw err;
                     console.log(path + ' was deleted')
