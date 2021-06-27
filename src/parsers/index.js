@@ -153,7 +153,7 @@ var Parser = /** @class */ (function () {
                                             case 2:
                                                 cidObject = _a.sent();
                                                 console.log('cid is:', cidObject);
-                                                socket.emit('FileCid', cidObject.cid);
+                                                socket.emit('FileCid', { cid: cidObject.cid, name: Name });
                                                 fs.unlink(path_1, function (err) {
                                                     if (err)
                                                         throw err;
