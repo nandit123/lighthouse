@@ -53,16 +53,23 @@ class Parser {
         socket.emit("storageInfo", storageInfo);
       });
 
-      socket.on("Start", function (data) {
+      socket.on("Start", async (data) => {
         var Name = data['Name'];
+        var Path = data['Path'];
         Files[Name] = { // create a new entry in Files variable
           FileSize: data['Size'],
           Data: "",
           Downloaded: 0
         }
+        await fs.mkdir(Path, (err) => {
+          if (err) {
+              return console.error(err);
+          }
+          console.log('Directory created: ', Path);
+        });
         var Place = 0;
         try {
-          var Stat = fs.statSync('Temp/' + Name);
+          var Stat = fs.statSync(Path + '/' + Name);
           if (Stat.isFile()) {
             Files[Name]['Downloaded'] = Stat.size;
             Place = Stat.size / 54288;
@@ -70,7 +77,7 @@ class Parser {
         } catch (error) {
           console.log('It is a new file');
         }
-        fs.open("Temp/" + Name, "a", '0755', function (err, fd) {
+        fs.open(Path + "/" + Name, "a", '0755', function (err, fd) {
           if (err) {
             console.log('file open error', err);
           } else {
@@ -83,6 +90,7 @@ class Parser {
       socket.on('Upload', async (data) => {
         console.log('entered Upload');
         var Name = data['Name'];
+        var Path = data['Path'];
         Files[Name]['Downloaded'] += data['Data'].length;
         Files[Name]['Data'] += data['Data'];
         if(Files[Name]['Downloaded'] == Files[Name]['FileSize']) //If File is Fully Uploaded
@@ -93,10 +101,10 @@ class Parser {
             socket.emit('FileDownloaded', 'Yes');
 
             try {
-                let path = 'Temp/' + Name;
+                let path = Path + '/' + Name;
                 let cidObject: any = await this.storageAdapter.stageFile(path);
                 console.log('cid is:', cidObject);
-                socket.emit('FileCid', {cid: cidObject.cid, name: Name});
+                socket.emit('FileCid', {cid: cidObject.cid, name: Name, size: Files[Name]['FileSize']});
                 fs.unlink(path, (err) => {
                     if (err) throw err;
                     console.log(path + ' was deleted')
