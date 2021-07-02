@@ -22,7 +22,6 @@ class Infura {
   }
 
   start() {
-    console.log('hello yo');
     this.contract.events.StorageRequest((error, event) => {
       if (error) {
         // TODO:  Log error
