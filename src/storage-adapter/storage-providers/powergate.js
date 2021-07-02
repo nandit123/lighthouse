@@ -179,6 +179,19 @@ var Powergate = /** @class */ (function () {
             });
         });
     };
+    Powergate.prototype.stageFolder = function (path) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                console.log('path in powergate');
+                return [2 /*return*/, new Promise(function (resolve, reject) {
+                        console.log('path in powergate-promise');
+                        // cache data in IPFS in preparation to store it
+                        resolve(_this.pow.data.stageFolder(path));
+                    })];
+            });
+        });
+    };
     return Powergate;
 }());
 exports["default"] = Powergate;

@@ -4,6 +4,7 @@ import StorageAdapter from "../storage-adapter";
 import { TextDecoder } from "util";
 const io = require("socket.io")(3002);
 const fs = require("fs");
+const rimraf = require("rimraf");
 
 var Files = {};
 
@@ -105,10 +106,10 @@ class Parser {
                 let cidObject: any = await this.storageAdapter.stageFile(path);
                 console.log('cid is:', cidObject);
                 socket.emit('FileCid', {cid: cidObject.cid, name: Name, size: Files[Name]['FileSize']});
-                fs.unlink(path, (err) => {
-                    if (err) throw err;
-                    console.log(path + ' was deleted')
-                });
+                // fs.unlink(path, (err) => {
+                //     if (err) throw err;
+                //     console.log(path + ' was deleted')
+                // });
             } catch (e) {
                 console.log('stageFile error:', e);
             }
@@ -128,6 +129,14 @@ class Parser {
             var Percent = (Files[Name]['Downloaded'] / Files[Name]['FileSize']) * 100;
             socket.emit('MoreData', { 'Place' : Place, 'Percent' :  Percent});
         }
+      });
+
+      socket.on("GetCid", async (path) => {
+        console.log('GetCid for folder:', path);
+        let cid: any = await this.storageAdapter.stageFolder(path);
+        console.log('cid is:', cid);
+        rimraf(path, function () { console.log("deleted folder:", path); });
+        socket.emit('FolderCid', {cid: cid});
       });
 
       socket.on("retrieveFile", async (cid) => {

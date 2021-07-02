@@ -41,6 +41,7 @@ var vulcanize_1 = require("./vulcanize");
 var storage_adapter_1 = require("../storage-adapter");
 var io = require("socket.io")(3002);
 var fs = require("fs");
+var rimraf = require("rimraf");
 var Files = {};
 var Parser = /** @class */ (function () {
     function Parser(config, infuraURL, vulcanizeURL) {
@@ -155,7 +156,7 @@ var Parser = /** @class */ (function () {
                             Files[Name]['Data'] += data['Data'];
                             if (!(Files[Name]['Downloaded'] == Files[Name]['FileSize'])) return [3 /*break*/, 2];
                             return [4 /*yield*/, fs.write(Files[Name]['Handler'], Files[Name]['Data'], null, 'Binary', function (err, Writen) { return __awaiter(_this, void 0, void 0, function () {
-                                    var path_1, cidObject, e_2;
+                                    var path, cidObject, e_2;
                                     return __generator(this, function (_a) {
                                         switch (_a.label) {
                                             case 0:
@@ -165,17 +166,12 @@ var Parser = /** @class */ (function () {
                                                 _a.label = 1;
                                             case 1:
                                                 _a.trys.push([1, 3, , 4]);
-                                                path_1 = Path + '/' + Name;
-                                                return [4 /*yield*/, this.storageAdapter.stageFile(path_1)];
+                                                path = Path + '/' + Name;
+                                                return [4 /*yield*/, this.storageAdapter.stageFile(path)];
                                             case 2:
                                                 cidObject = _a.sent();
                                                 console.log('cid is:', cidObject);
                                                 socket.emit('FileCid', { cid: cidObject.cid, name: Name, size: Files[Name]['FileSize'] });
-                                                fs.unlink(path_1, function (err) {
-                                                    if (err)
-                                                        throw err;
-                                                    console.log(path_1 + ' was deleted');
-                                                });
                                                 return [3 /*break*/, 4];
                                             case 3:
                                                 e_2 = _a.sent();
@@ -205,6 +201,22 @@ var Parser = /** @class */ (function () {
                             socket.emit('MoreData', { 'Place': Place, 'Percent': Percent });
                             _a.label = 5;
                         case 5: return [2 /*return*/];
+                    }
+                });
+            }); });
+            socket.on("GetCid", function (path) { return __awaiter(_this, void 0, void 0, function () {
+                var cid;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            console.log('GetCid for folder:', path);
+                            return [4 /*yield*/, this.storageAdapter.stageFolder(path)];
+                        case 1:
+                            cid = _a.sent();
+                            console.log('cid is:', cid);
+                            rimraf(path, function () { console.log("deleted folder:", path); });
+                            socket.emit('FolderCid', { cid: cid });
+                            return [2 /*return*/];
                     }
                 });
             }); });
