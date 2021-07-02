@@ -41,6 +41,7 @@ var vulcanize_1 = require("./vulcanize");
 var storage_adapter_1 = require("../storage-adapter");
 var io = require("socket.io")(3002);
 var fs = require("fs");
+var rimraf = require("rimraf");
 var Files = {};
 var Parser = /** @class */ (function () {
     function Parser(config, infuraURL, vulcanizeURL) {
@@ -98,85 +99,124 @@ var Parser = /** @class */ (function () {
                     }
                 });
             }); });
-            socket.on("Start", function (data) {
-                var Name = data['Name'];
-                Files[Name] = {
-                    FileSize: data['Size'],
-                    Data: "",
-                    Downloaded: 0
-                };
-                var Place = 0;
-                try {
-                    var Stat = fs.statSync('Temp/' + Name);
-                    if (Stat.isFile()) {
-                        Files[Name]['Downloaded'] = Stat.size;
-                        Place = Stat.size / 54288;
-                    }
-                }
-                catch (error) {
-                    console.log('It is a new file');
-                }
-                fs.open("Temp/" + Name, "a", '0755', function (err, fd) {
-                    if (err) {
-                        console.log('file open error', err);
-                    }
-                    else {
-                        Files[Name]['Handler'] = fd; // we store file handler so we can write to it later
-                        socket.emit('MoreData', { 'Place': Place, Percent: 0 });
+            socket.on("Start", function (data) { return __awaiter(_this, void 0, void 0, function () {
+                var Name, Path, Place, Stat;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            Name = data['Name'];
+                            Path = data['Path'];
+                            Files[Name] = {
+                                FileSize: data['Size'],
+                                Data: "",
+                                Downloaded: 0
+                            };
+                            return [4 /*yield*/, fs.mkdir(Path, function (err) {
+                                    if (err) {
+                                        return console.error(err);
+                                    }
+                                    console.log('Directory created: ', Path);
+                                })];
+                        case 1:
+                            _a.sent();
+                            Place = 0;
+                            try {
+                                Stat = fs.statSync(Path + '/' + Name);
+                                if (Stat.isFile()) {
+                                    Files[Name]['Downloaded'] = Stat.size;
+                                    Place = Stat.size / 54288;
+                                }
+                            }
+                            catch (error) {
+                                console.log('It is a new file');
+                            }
+                            fs.open(Path + "/" + Name, "a", '0755', function (err, fd) {
+                                if (err) {
+                                    console.log('file open error', err);
+                                }
+                                else {
+                                    Files[Name]['Handler'] = fd; // we store file handler so we can write to it later
+                                    socket.emit('MoreData', { 'Place': Place, Percent: 0 });
+                                }
+                            });
+                            return [2 /*return*/];
                     }
                 });
-            });
+            }); });
             socket.on('Upload', function (data) { return __awaiter(_this, void 0, void 0, function () {
-                var Name, Place, Percent, path_1, cidObject, e_2;
+                var Name, Path, Place, Percent;
+                var _this = this;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
                             console.log('entered Upload');
                             Name = data['Name'];
+                            Path = data['Path'];
                             Files[Name]['Downloaded'] += data['Data'].length;
                             Files[Name]['Data'] += data['Data'];
-                            if (Files[Name]['Downloaded'] == Files[Name]['FileSize']) //If File is Fully Uploaded
-                             {
-                                fs.write(Files[Name]['Handler'], Files[Name]['Data'], null, 'Binary', function (err, Writen) {
-                                    //Get Thumbnail Here
-                                });
-                            }
-                            else if (Files[Name]['Data'].length > 10485760) { //If the Data Buffer reaches 10MB
-                                fs.write(Files[Name]['Handler'], Files[Name]['Data'], null, 'Binary', function (err, Writen) {
+                            if (!(Files[Name]['Downloaded'] == Files[Name]['FileSize'])) return [3 /*break*/, 2];
+                            return [4 /*yield*/, fs.write(Files[Name]['Handler'], Files[Name]['Data'], null, 'Binary', function (err, Writen) { return __awaiter(_this, void 0, void 0, function () {
+                                    var path, cidObject, e_2;
+                                    return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0:
+                                                //Get Thumbnail Here
+                                                console.log('File downloaded fully !!', Name);
+                                                socket.emit('FileDownloaded', 'Yes');
+                                                _a.label = 1;
+                                            case 1:
+                                                _a.trys.push([1, 3, , 4]);
+                                                path = Path + '/' + Name;
+                                                return [4 /*yield*/, this.storageAdapter.stageFile(path)];
+                                            case 2:
+                                                cidObject = _a.sent();
+                                                console.log('cid is:', cidObject);
+                                                socket.emit('FileCid', { cid: cidObject.cid, name: Name, size: Files[Name]['FileSize'] });
+                                                return [3 /*break*/, 4];
+                                            case 3:
+                                                e_2 = _a.sent();
+                                                console.log('stageFile error:', e_2);
+                                                return [3 /*break*/, 4];
+                                            case 4: return [2 /*return*/];
+                                        }
+                                    });
+                                }); })];
+                        case 1:
+                            _a.sent();
+                            return [3 /*break*/, 5];
+                        case 2:
+                            if (!(Files[Name]['Data'].length > 10485760)) return [3 /*break*/, 4];
+                            return [4 /*yield*/, fs.write(Files[Name]['Handler'], Files[Name]['Data'], null, 'Binary', function (err, Writen) {
                                     Files[Name]['Data'] = ""; //Reset The Buffer
                                     var Place = Files[Name]['Downloaded'] / 524288;
                                     var Percent = (Files[Name]['Downloaded'] / Files[Name]['FileSize']) * 100;
                                     socket.emit('MoreData', { 'Place': Place, 'Percent': Percent });
-                                });
-                            }
-                            else {
-                                Place = Files[Name]['Downloaded'] / 524288;
-                                Percent = (Files[Name]['Downloaded'] / Files[Name]['FileSize']) * 100;
-                                socket.emit('MoreData', { 'Place': Place, 'Percent': Percent });
-                            }
-                            if (!(Files[Name]['Downloaded'] == Files[Name]['FileSize'])) return [3 /*break*/, 4];
-                            console.log('File downloaded fully !!', Name);
-                            socket.emit('FileDownloaded', 'Yes');
-                            _a.label = 1;
-                        case 1:
-                            _a.trys.push([1, 3, , 4]);
-                            path_1 = 'Temp/' + Name;
-                            return [4 /*yield*/, this.storageAdapter.stageFile(path_1)];
-                        case 2:
-                            cidObject = _a.sent();
-                            console.log('cid is:', cidObject);
-                            socket.emit('FileCid', cidObject.cid);
-                            fs.unlink(path_1, function (err) {
-                                if (err)
-                                    throw err;
-                                console.log(path_1 + ' was deleted');
-                            });
-                            return [3 /*break*/, 4];
+                                })];
                         case 3:
-                            e_2 = _a.sent();
-                            console.log('stageFile error:', e_2);
-                            return [3 /*break*/, 4];
-                        case 4: return [2 /*return*/];
+                            _a.sent();
+                            return [3 /*break*/, 5];
+                        case 4:
+                            Place = Files[Name]['Downloaded'] / 524288;
+                            Percent = (Files[Name]['Downloaded'] / Files[Name]['FileSize']) * 100;
+                            socket.emit('MoreData', { 'Place': Place, 'Percent': Percent });
+                            _a.label = 5;
+                        case 5: return [2 /*return*/];
+                    }
+                });
+            }); });
+            socket.on("GetCid", function (path) { return __awaiter(_this, void 0, void 0, function () {
+                var cid;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            console.log('GetCid for folder:', path);
+                            return [4 /*yield*/, this.storageAdapter.stageFolder(path)];
+                        case 1:
+                            cid = _a.sent();
+                            console.log('cid is:', cid);
+                            rimraf(path, function () { console.log("deleted folder:", path); });
+                            socket.emit('FolderCid', { cid: cid });
+                            return [2 /*return*/];
                     }
                 });
             }); });

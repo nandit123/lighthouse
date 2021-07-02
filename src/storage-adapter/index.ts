@@ -40,6 +40,11 @@ class StorageAdapter {
     return this.storageProvider.stageFile(path);
   }
 
+  stageFolder(path: string): Promise<object> {
+    console.log('path in storage-adapter');
+    return this.storageProvider.stageFolder(path);
+  }
+
   retrieveFile(cid: string): Promise<Uint8Array> {
     console.log('cid in storage-adapter');
     return this.storageProvider.retrieveFile(cid);

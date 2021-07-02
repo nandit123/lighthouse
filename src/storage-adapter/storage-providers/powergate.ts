@@ -111,7 +111,16 @@ class Powergate implements Provider {
       const buffer = fs.readFileSync(path)
       resolve(this.pow.data.stage(buffer));
     })
-  } 
+  }
+
+  async stageFolder(path: string): Promise<object> {
+    console.log('path in powergate');
+    return new Promise((resolve, reject) => {
+      console.log('path in powergate-promise');
+       // cache data in IPFS in preparation to store it
+      resolve(this.pow.data.stageFolder(path));
+    })
+  }
 }
 
 export default Powergate;

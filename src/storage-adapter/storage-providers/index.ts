@@ -59,6 +59,11 @@ class StorageProvider {
     return this.powergate.stageFile(path);
   }
 
+  async stageFolder(path: string): Promise<object> {
+    console.log('path in storage-provider');
+    return this.powergate.stageFolder(path);
+  }
+
   async retrieveFile(cid: string): Promise<Uint8Array> {
     console.log('cid in storage-provider');
     return this.powergate.retrieveFile(cid);

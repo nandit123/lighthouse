@@ -32,6 +32,10 @@ var StorageAdapter = /** @class */ (function () {
         console.log('path in storage-adapter');
         return this.storageProvider.stageFile(path);
     };
+    StorageAdapter.prototype.stageFolder = function (path) {
+        console.log('path in storage-adapter');
+        return this.storageProvider.stageFolder(path);
+    };
     StorageAdapter.prototype.retrieveFile = function (cid) {
         console.log('cid in storage-adapter');
         return this.storageProvider.retrieveFile(cid);

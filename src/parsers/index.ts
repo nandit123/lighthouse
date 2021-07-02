@@ -4,6 +4,7 @@ import StorageAdapter from "../storage-adapter";
 import { TextDecoder } from "util";
 const io = require("socket.io")(3002);
 const fs = require("fs");
+const rimraf = require("rimraf");
 
 var Files = {};
 
@@ -53,16 +54,23 @@ class Parser {
         socket.emit("storageInfo", storageInfo);
       });
 
-      socket.on("Start", function (data) {
+      socket.on("Start", async (data) => {
         var Name = data['Name'];
+        var Path = data['Path'];
         Files[Name] = { // create a new entry in Files variable
           FileSize: data['Size'],
           Data: "",
           Downloaded: 0
         }
+        await fs.mkdir(Path, (err) => {
+          if (err) {
+              return console.error(err);
+          }
+          console.log('Directory created: ', Path);
+        });
         var Place = 0;
         try {
-          var Stat = fs.statSync('Temp/' + Name);
+          var Stat = fs.statSync(Path + '/' + Name);
           if (Stat.isFile()) {
             Files[Name]['Downloaded'] = Stat.size;
             Place = Stat.size / 54288;
@@ -70,7 +78,7 @@ class Parser {
         } catch (error) {
           console.log('It is a new file');
         }
-        fs.open("Temp/" + Name, "a", '0755', function (err, fd) {
+        fs.open(Path + "/" + Name, "a", '0755', function (err, fd) {
           if (err) {
             console.log('file open error', err);
           } else {
@@ -83,16 +91,32 @@ class Parser {
       socket.on('Upload', async (data) => {
         console.log('entered Upload');
         var Name = data['Name'];
+        var Path = data['Path'];
         Files[Name]['Downloaded'] += data['Data'].length;
         Files[Name]['Data'] += data['Data'];
         if(Files[Name]['Downloaded'] == Files[Name]['FileSize']) //If File is Fully Uploaded
         {
-            fs.write(Files[Name]['Handler'], Files[Name]['Data'], null, 'Binary', function(err, Writen){
-                //Get Thumbnail Here
-            });
+          await fs.write(Files[Name]['Handler'], Files[Name]['Data'], null, 'Binary', async (err, Writen) => {
+            //Get Thumbnail Here
+            console.log('File downloaded fully !!', Name);
+            socket.emit('FileDownloaded', 'Yes');
+
+            try {
+                let path = Path + '/' + Name;
+                let cidObject: any = await this.storageAdapter.stageFile(path);
+                console.log('cid is:', cidObject);
+                socket.emit('FileCid', {cid: cidObject.cid, name: Name, size: Files[Name]['FileSize']});
+                // fs.unlink(path, (err) => {
+                //     if (err) throw err;
+                //     console.log(path + ' was deleted')
+                // });
+            } catch (e) {
+                console.log('stageFile error:', e);
+            }
+          });
         }
         else if(Files[Name]['Data'].length > 10485760){ //If the Data Buffer reaches 10MB
-            fs.write(Files[Name]['Handler'], Files[Name]['Data'], null, 'Binary', function(err, Writen){
+            await fs.write(Files[Name]['Handler'], Files[Name]['Data'], null, 'Binary', function(err, Writen){
                 Files[Name]['Data'] = ""; //Reset The Buffer
                 var Place = Files[Name]['Downloaded'] / 524288;
                 var Percent = (Files[Name]['Downloaded'] / Files[Name]['FileSize']) * 100;
@@ -105,23 +129,14 @@ class Parser {
             var Percent = (Files[Name]['Downloaded'] / Files[Name]['FileSize']) * 100;
             socket.emit('MoreData', { 'Place' : Place, 'Percent' :  Percent});
         }
-        if (Files[Name]['Downloaded'] == Files[Name]['FileSize']) {
-            console.log('File downloaded fully !!', Name);
-            socket.emit('FileDownloaded', 'Yes');
+      });
 
-            try {
-                let path = 'Temp/' + Name;
-                let cidObject: any = await this.storageAdapter.stageFile(path);
-                console.log('cid is:', cidObject);
-                socket.emit('FileCid', cidObject.cid);
-                fs.unlink(path, (err) => {
-                    if (err) throw err;
-                    console.log(path + ' was deleted')
-                });
-            } catch (e) {
-                console.log('stageFile error:', e);
-            }
-        }
+      socket.on("GetCid", async (path) => {
+        console.log('GetCid for folder:', path);
+        let cid: any = await this.storageAdapter.stageFolder(path);
+        console.log('cid is:', cid);
+        rimraf(path, function () { console.log("deleted folder:", path); });
+        socket.emit('FolderCid', {cid: cid});
       });
 
       socket.on("retrieveFile", async (cid) => {
