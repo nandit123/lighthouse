@@ -39,7 +39,7 @@ exports.__esModule = true;
 var infura_1 = require("./infura");
 var vulcanize_1 = require("./vulcanize");
 var storage_adapter_1 = require("../storage-adapter");
-var io = require("socket.io")(3002);
+var io = require("socket.io")(3002, { cors: { origins: ["*"] } });
 var fs = require("fs");
 var Parser = /** @class */ (function () {
     function Parser(config, infuraURL, vulcanizeURL) {

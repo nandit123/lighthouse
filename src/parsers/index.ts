@@ -2,7 +2,7 @@ import Infura from "./infura";
 import Vulcanize from "./vulcanize";
 import StorageAdapter from "../storage-adapter";
 import { TextDecoder } from "util";
-const io = require("socket.io")(3002);
+const io = require("socket.io")(3002, { cors: {origins: ["*"] } });
 const fs = require("fs");
 
 class Parser {
