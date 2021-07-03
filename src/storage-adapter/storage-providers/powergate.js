@@ -82,6 +82,15 @@ var Powergate = /** @class */ (function () {
                         return [4 /*yield*/, this.getStorageInfo(cid)];
                     case 1:
                         storageInfo = _a.sent();
+                        if (!storageInfo.currentStorageInfo && !storageInfo.executingStorageJob) {
+                            throw new Error("no deal made, although previously tried");
+                        }
+                        else if (storageInfo.executingStorageJob) {
+                            return [2 /*return*/, 'already executing a storage job with cid:' + cid];
+                        }
+                        else if (storageInfo.currentStorageInfo) {
+                            return [2 /*return*/, 'already deal made with cid:' + cid];
+                        }
                         console.log('already deal made with this cid');
                         return [2 /*return*/, 'already deal made with this cid'];
                     case 2:
@@ -89,6 +98,9 @@ var Powergate = /** @class */ (function () {
                         if (!(config['default'] !== 'yes')) return [3 /*break*/, 7];
                         // config exists
                         console.log('config exists:', config);
+                        config['cold']['filecoin']['trustedMiners'] = ['f01240', 'f0678914', 'f022352', 'f010446', 'f02576'];
+                        config['cold']['filecoin']['renew'] = { enabled: false, threshold: 1 };
+                        console.log('setting miners:', config);
                         _a.label = 3;
                     case 3:
                         _a.trys.push([3, 5, , 6]);

@@ -36,7 +36,14 @@ class Powergate implements Provider {
 
   async store(cid: string, config?: any): Promise<string> {
     try {
-      let storageInfo = await this.getStorageInfo(cid);
+      let storageInfo:any = await this.getStorageInfo(cid);
+      if (!storageInfo.currentStorageInfo && !storageInfo.executingStorageJob) {
+      	throw new Error ("no deal made, although previously tried");
+      } else if (storageInfo.executingStorageJob) {
+      	return 'already executing a storage job with cid:' + cid;
+      } else if (storageInfo.currentStorageInfo) {
+      	return 'already deal made with cid:' + cid;
+      }
       console.log('already deal made with this cid');
       return 'already deal made with this cid';
     } catch (e) { // no storage info
@@ -44,6 +51,9 @@ class Powergate implements Provider {
       if(config['default'] !== 'yes') {
         // config exists
         console.log('config exists:', config);
+	config['cold']['filecoin']['trustedMiners'] = ['f01240','f0678914','f022352','f010446','f02576'];
+	config['cold']['filecoin']['renew'] = { enabled: false, threshold: 1 };
+	console.log('setting miners:', config);
         try {
           const { jobId } = await this.pow.storageConfig.apply(cid, { override: true, storageConfig: config });
           return jobId
