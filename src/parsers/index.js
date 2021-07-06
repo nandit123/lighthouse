@@ -90,7 +90,7 @@ var Parser = /** @class */ (function () {
                         case 4:
                             e_1 = _h.sent();
                             console.log('entered catch');
-                            storageInfo = { storageInfo: 'no-deal-found,' + e_1 };
+                            storageInfo = { storageInfo: 'No Storage Deal found for this CID' };
                             return [3 /*break*/, 5];
                         case 5:
                             // or with emit() and custom event names
@@ -156,29 +156,25 @@ var Parser = /** @class */ (function () {
                             Files[Name]['Data'] += data['Data'];
                             if (!(Files[Name]['Downloaded'] == Files[Name]['FileSize'])) return [3 /*break*/, 2];
                             return [4 /*yield*/, fs.write(Files[Name]['Handler'], Files[Name]['Data'], null, 'Binary', function (err, Writen) { return __awaiter(_this, void 0, void 0, function () {
-                                    var path, cidObject, e_2;
+                                    var path;
                                     return __generator(this, function (_a) {
-                                        switch (_a.label) {
-                                            case 0:
-                                                //Get Thumbnail Here
-                                                console.log('File downloaded fully !!', Name);
-                                                socket.emit('FileDownloaded', 'Yes');
-                                                _a.label = 1;
-                                            case 1:
-                                                _a.trys.push([1, 3, , 4]);
-                                                path = Path + '/' + Name;
-                                                return [4 /*yield*/, this.storageAdapter.stageFile(path)];
-                                            case 2:
-                                                cidObject = _a.sent();
-                                                console.log('cid is:', cidObject);
-                                                socket.emit('FileCid', { cid: cidObject.cid, name: Name, size: Files[Name]['FileSize'] });
-                                                return [3 /*break*/, 4];
-                                            case 3:
-                                                e_2 = _a.sent();
-                                                console.log('stageFile error:', e_2);
-                                                return [3 /*break*/, 4];
-                                            case 4: return [2 /*return*/];
+                                        //Get Thumbnail Here
+                                        console.log('File downloaded fully !!', Name);
+                                        socket.emit('FileDownloaded', 'Yes');
+                                        try {
+                                            path = Path + '/' + Name;
+                                            // let cidObject: any = await this.storageAdapter.stageFile(path);
+                                            // console.log('cid is:', cidObject);
+                                            socket.emit('FileInfo', { name: Name, size: Files[Name]['FileSize'] });
+                                            // fs.unlink(path, (err) => {
+                                            //     if (err) throw err;
+                                            //     console.log(path + ' was deleted')
+                                            // });
                                         }
+                                        catch (e) {
+                                            console.log('stageFile error:', e);
+                                        }
+                                        return [2 /*return*/];
                                     });
                                 }); })];
                         case 1:
@@ -221,7 +217,7 @@ var Parser = /** @class */ (function () {
                 });
             }); });
             socket.on("retrieveFile", function (cid) { return __awaiter(_this, void 0, void 0, function () {
-                var file, e_3;
+                var file, e_2;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
@@ -236,7 +232,7 @@ var Parser = /** @class */ (function () {
                             file = (_a.sent()).buffer;
                             return [3 /*break*/, 4];
                         case 3:
-                            e_3 = _a.sent();
+                            e_2 = _a.sent();
                             console.log('entered catch');
                             file = 'error';
                             return [3 /*break*/, 4];

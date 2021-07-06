@@ -48,7 +48,7 @@ class Parser {
           storageInfo = JSON.stringify(await this.storageAdapter.getStorageInfo(cid));
         } catch(e) {
           console.log('entered catch');
-          storageInfo = { storageInfo: 'no-deal-found,' + e };
+          storageInfo = { storageInfo: 'No Storage Deal found for this CID' };
         }
         // or with emit() and custom event names
         socket.emit("storageInfo", storageInfo);
@@ -103,9 +103,9 @@ class Parser {
 
             try {
                 let path = Path + '/' + Name;
-                let cidObject: any = await this.storageAdapter.stageFile(path);
-                console.log('cid is:', cidObject);
-                socket.emit('FileCid', {cid: cidObject.cid, name: Name, size: Files[Name]['FileSize']});
+                // let cidObject: any = await this.storageAdapter.stageFile(path);
+                // console.log('cid is:', cidObject);
+                socket.emit('FileInfo', { name: Name, size: Files[Name]['FileSize']});
                 // fs.unlink(path, (err) => {
                 //     if (err) throw err;
                 //     console.log(path + ' was deleted')
