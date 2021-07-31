@@ -30,6 +30,8 @@
     "@truffle/hdwallet-provider": "^1.4.0",
     "dotenv": "^8.2.0",
     "fs": "0.0.1-security",
+    "ipfs-core": "^0.9.1",
+    "ipfs-http-client": "^51.0.1",
     "kikstart-graphql-client": "^1.5.0",
     "postgraphile": "^4.11.0",
     "rimraf": "^3.0.2",
