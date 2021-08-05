@@ -42,6 +42,8 @@ var storage_adapter_1 = require("../storage-adapter");
 var io = require("socket.io")(3002, { cors: { origins: ["*"] } });
 var fs = require("fs");
 var rimraf = require("rimraf");
+var IPFS = require('ipfs-core');
+var ipfsClient = require('ipfs-http-client');
 var Files = {};
 var Parser = /** @class */ (function () {
     function Parser(config, infuraURL, vulcanizeURL) {
@@ -216,8 +218,34 @@ var Parser = /** @class */ (function () {
                     }
                 });
             }); });
+            socket.on("GetCidSize", function (cid) { return __awaiter(_this, void 0, void 0, function () {
+                var ipfs, cidInfo, e_2;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            console.log("Size for cid:", cid);
+                            return [4 /*yield*/, ipfsClient.create({ host: 'localhost', port: '5001', protocol: 'http' })];
+                        case 1:
+                            ipfs = _a.sent();
+                            _a.label = 2;
+                        case 2:
+                            _a.trys.push([2, 4, , 5]);
+                            return [4 /*yield*/, ipfs.files.stat("/ipfs/" + cid)];
+                        case 3:
+                            cidInfo = _a.sent();
+                            console.log('cidinfo:', cidInfo);
+                            socket.emit('CidSize', { size: cidInfo.cumulativeSize });
+                            return [3 /*break*/, 5];
+                        case 4:
+                            e_2 = _a.sent();
+                            socket.emit('CidSize', { size: "Error" });
+                            return [3 /*break*/, 5];
+                        case 5: return [2 /*return*/];
+                    }
+                });
+            }); });
             socket.on("retrieveFile", function (cid) { return __awaiter(_this, void 0, void 0, function () {
-                var file, e_2;
+                var file, e_3;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
@@ -232,7 +260,7 @@ var Parser = /** @class */ (function () {
                             file = (_a.sent()).buffer;
                             return [3 /*break*/, 4];
                         case 3:
-                            e_2 = _a.sent();
+                            e_3 = _a.sent();
                             console.log('entered catch');
                             file = 'error';
                             return [3 /*break*/, 4];
