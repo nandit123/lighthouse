@@ -1,8 +1,8 @@
-# LightHouse Node ⛯
+# Lighthouse Node
 This project provides a way for Ethereum smart contracts to request Filecoin storage of CIDs in IPFS via Powergate. Hence, Ethereum developers can use this to request verifiable storage of data to Filecoin from Ethereum smart contracts. 
 
 ### Website
-http://ec2-13-126-82-18.ap-south-1.compute.amazonaws.com/
+http://lighthouse.ninja
 ### Blog Post
 Read more about it on the blog here - https://nanditmehra123.medium.com/lighthouse-filecoin-ethereum-cross-chain-infra-project-66c041a1a1db
 ### Demo Video 
