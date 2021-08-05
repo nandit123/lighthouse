@@ -5,6 +5,8 @@ import { TextDecoder } from "util";
 const io = require("socket.io")(3002, { cors: {origins: ["*"] } });
 const fs = require("fs");
 const rimraf = require("rimraf");
+const IPFS = require('ipfs-core')
+const ipfsClient = require('ipfs-http-client');
 
 var Files = {};
 
@@ -137,6 +139,18 @@ class Parser {
         console.log('cid is:', cid);
         rimraf(path, function () { console.log("deleted folder:", path); });
         socket.emit('FolderCid', {cid: cid});
+      });
+
+      socket.on("GetCidSize", async(cid) => {
+        console.log("Size for cid:", cid);
+        const ipfs = await ipfsClient.create({ host: 'localhost', port: '5001', protocol: 'http' })
+        try {
+          let cidInfo = await ipfs.files.stat("/ipfs/" + cid);
+          console.log('cidinfo:', cidInfo);
+          socket.emit('CidSize', { size: cidInfo.cumulativeSize });
+        } catch (e) {
+          socket.emit('CidSize', { size: "Error" });
+        }
       });
 
       socket.on("retrieveFile", async (cid) => {
