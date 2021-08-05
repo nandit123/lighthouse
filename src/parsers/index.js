@@ -260,7 +260,6 @@ var Parser = /** @class */ (function () {
                             file = (_a.sent()).buffer;
                             return [3 /*break*/, 4];
                         case 3:
-                            e_2 = _a.sent();
                             e_3 = _a.sent();
                             console.log('entered catch');
                             file = 'error';
