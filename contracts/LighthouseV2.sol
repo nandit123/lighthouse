@@ -3,11 +3,7 @@
 pragma solidity >=0.4.22 <0.8.0;
 
 contract Lighthouse  {
-    address owner;
-
-    constructor () {
-        owner == msg.sender;    
-    }
+    address owner = msg.sender;
 
     struct Content {
         string cid;
@@ -16,7 +12,7 @@ contract Lighthouse  {
     }
 
     struct Status {
-        uint dealId;
+        string dealIds;
         bool active;
         // mapping (uint => string) miners;
     }
@@ -25,7 +21,7 @@ contract Lighthouse  {
     event StorageStatusRequest(address requester, string cid);
 
     mapping(address => mapping(string => Content)) public requests;
-    mapping(address => mapping(string => Status)) public status; // address -> cid -> status
+    mapping(string => Status) public statuses; // address -> cid -> status
 
     function store(string calldata cid, string calldata config)
         external
@@ -48,12 +44,12 @@ contract Lighthouse  {
     {
         emit StorageStatusRequest(msg.sender, cid);
     }
-    
-    function publishStorageStatus(address sender, string calldata cid, uint dealId, bool active) 
+
+    function publishStorageStatus(string calldata cid, string calldata dealIds, bool active) 
         external
     { // restrict it to only to the user
         require(msg.sender == owner);
-        status[sender][cid] = Status(dealId, active);
+        statuses[cid] = Status(dealIds, active);
     }
 
     fallback () external payable  {}
