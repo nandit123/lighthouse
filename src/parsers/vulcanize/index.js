@@ -91,6 +91,53 @@ function modifyConfig(config) {
     });
     return config;
 }
+function publishStorageStatus(web3, PUBLIC_KEY, PRIVATE_KEY, lighthouseContract, contractAddress, cid, dealIds, active) {
+    return __awaiter(this, void 0, void 0, function () {
+        var nonce, gasEstimate, e_1, tx, signPromise;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, web3.eth.getTransactionCount(PUBLIC_KEY, 'latest')];
+                case 1:
+                    nonce = _a.sent();
+                    _a.label = 2;
+                case 2:
+                    _a.trys.push([2, 4, , 5]);
+                    return [4 /*yield*/, lighthouseContract.methods.publishStorageStatus(cid, dealIds, active).estimateGas({ from: PUBLIC_KEY })];
+                case 3:
+                    gasEstimate = _a.sent(); // estimate gas
+                    return [3 /*break*/, 5];
+                case 4:
+                    e_1 = _a.sent();
+                    console.log('error:', e_1);
+                    return [3 /*break*/, 5];
+                case 5:
+                    console.log('gasEstimate:', gasEstimate);
+                    tx = {
+                        'from': PUBLIC_KEY,
+                        'to': contractAddress,
+                        'nonce': nonce,
+                        'gas': gasEstimate,
+                        'maxFeePerGas': 1000000108,
+                        'data': lighthouseContract.methods.publishStorageStatus(cid, dealIds, active).encodeABI()
+                    };
+                    signPromise = web3.eth.accounts.signTransaction(tx, PRIVATE_KEY);
+                    signPromise.then(function (signedTx) {
+                        web3.eth.sendSignedTransaction(signedTx.rawTransaction, function (err, hash) {
+                            if (!err) {
+                                console.log("The hash of your transaction is: ", hash);
+                            }
+                            else {
+                                console.log("Something went wrong when submitting your transaction:", err);
+                            }
+                        });
+                    })["catch"](function (err) {
+                        console.log("Promise failed:", err);
+                    });
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
 var client = new kik.GraphQLClient({
     uri: 'https://lighthouse.vdb.to/graphql',
     wsUri: 'wss://lighthouse.vdb.to/graphql'
@@ -130,15 +177,17 @@ var Vulcanize = /** @class */ (function () {
         console.log('Alchemy_wss:', process.env.ALCHEMY_WSS);
         web3.eth.subscribe("logs", { "address": process.env.LIGHTHOUSE_SMART_CONTRACT }, function (error, result) {
             return __awaiter(this, void 0, void 0, function () {
-                var data, event_1, cid, configString, config, address, jobId, event_2, cid, requester, storageInfo, dealProposals, dealList, i;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var data, event_1, cid, configString, config, address, jobId, _a, PUBLIC_KEY, PRIVATE_KEY, event_2, cid, requester, storageInfo, dealProposals, dealList, active, i, contractAbi, contractAddress, lighthouseContract, _b;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
-                            if (!!error) return [3 /*break*/, 4];
+                            if (!!error) return [3 /*break*/, 9];
                             console.log('result:', result);
                             data = result.data;
                             console.log('now going to decode the data:', result.data);
-                            if (!data.fileCost) return [3 /*break*/, 1];
+                            _c.label = 1;
+                        case 1:
+                            _c.trys.push([1, 2, , 8]);
                             event_1 = web3Http.eth.abi.decodeLog(unindexedEventsStorageRequest, data);
                             console.log('event:', event_1);
                             console.log('address:', event_1.uploader);
@@ -152,8 +201,11 @@ var Vulcanize = /** @class */ (function () {
                             address = event_1.uploader;
                             jobId = storageAdapter.store(address, cid, config);
                             console.log('cid:', cid); //, '& jobId:', jobId)
-                            return [3 /*break*/, 3];
-                        case 1:
+                            return [3 /*break*/, 8];
+                        case 2:
+                            _a = _c.sent();
+                            PUBLIC_KEY = process.env.PUBLIC_KEY;
+                            PRIVATE_KEY = process.env.PRIVATE_KEY;
                             event_2 = web3Http.eth.abi.decodeLog(unindexedEventsStorageStatusRequest, data);
                             console.log('event:', event_2);
                             console.log('requester:', event_2.requester);
@@ -161,31 +213,40 @@ var Vulcanize = /** @class */ (function () {
                             cid = event_2.cid;
                             requester = event_2.requester;
                             return [4 /*yield*/, storageAdapter.getStorageInfo(cid)];
-                        case 2:
-                            storageInfo = _a.sent();
+                        case 3:
+                            storageInfo = _c.sent();
                             console.log('storageInfo:', storageInfo); // need dealID and active status
-                            try {
-                                console.log('cold filecoin:', storageInfo.cidInfo.currentStorageInfo.cold.filecoin);
-                                dealProposals = storageInfo.cidInfo.currentStorageInfo.cold.filecoin.proposalsList;
-                                console.log('dealProposals:', dealProposals);
-                                dealList = [];
-                                for (i = 0; i < dealProposals.length; i++) {
-                                    console.log('dealID:', dealProposals[i]["dealId"]);
-                                    dealList.push(dealProposals[i]["dealId"]);
-                                }
-                                console.log('deal list:', dealList);
-                                console.log('hot:', storageInfo.cidInfo.currentStorageInfo.hot);
-                            }
-                            catch ( // no on-chain deal
-                            _b) { // no on-chain deal
-                                console.log('hot:', storageInfo.cidInfo.currentStorageInfo.hot);
-                            }
-                            _a.label = 3;
-                        case 3: return [3 /*break*/, 5];
+                            _c.label = 4;
                         case 4:
+                            _c.trys.push([4, 6, , 7]);
+                            console.log('cold filecoin:', storageInfo.cidInfo.currentStorageInfo.cold.filecoin);
+                            dealProposals = storageInfo.cidInfo.currentStorageInfo.cold.filecoin.proposalsList;
+                            console.log('dealProposals:', dealProposals);
+                            dealList = [];
+                            active = void 0;
+                            for (i = 0; i < dealProposals.length; i++) {
+                                console.log('dealID:', dealProposals[i]["dealId"]);
+                                dealList.push(dealProposals[i]["dealId"]);
+                                active = true;
+                            }
+                            console.log('deal list:', dealList);
+                            contractAbi = require("./../../../contracts/abi/LighthouseV2.json");
+                            contractAddress = process.env.LIGHTHOUSE_SMART_CONTRACT;
+                            lighthouseContract = new web3.eth.Contract(contractAbi, contractAddress);
+                            return [4 /*yield*/, publishStorageStatus(web3Http, PUBLIC_KEY, PRIVATE_KEY, lighthouseContract, contractAddress, cid, dealList.toString(), active)];
+                        case 5:
+                            _c.sent();
+                            return [3 /*break*/, 7];
+                        case 6:
+                            _b = _c.sent();
+                            console.log('hot:', storageInfo.cidInfo.currentStorageInfo.hot);
+                            return [3 /*break*/, 7];
+                        case 7: return [3 /*break*/, 8];
+                        case 8: return [3 /*break*/, 10];
+                        case 9:
                             console.log('Event Storage Request', error);
-                            _a.label = 5;
-                        case 5: return [2 /*return*/];
+                            _c.label = 10;
+                        case 10: return [2 /*return*/];
                     }
                 });
             });
