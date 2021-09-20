@@ -89,6 +89,13 @@ var StorageProvider = /** @class */ (function () {
             });
         });
     };
+    StorageProvider.prototype.storageDealRecords = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, this.powergate.storageDealRecords()];
+            });
+        });
+    };
     StorageProvider.prototype.stageFile = function (path) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {

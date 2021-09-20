@@ -102,6 +102,13 @@ class Powergate implements Provider {
     })
   }
 
+  async storageDealRecords(): Promise<object> {
+    console.log('in getAllDealsInfo');
+    return new Promise((resolve, reject) => {
+      resolve(this.pow.deals.storageDealRecords({includeFinal: true}));
+    })
+  }
+
   async retrieveFile(cid: string): Promise<Uint8Array> {
     console.log('cid in powergate');
     // store the data using the default storage configuration
