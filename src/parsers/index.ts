@@ -7,6 +7,7 @@ const fs = require("fs");
 const rimraf = require("rimraf");
 const IPFS = require('ipfs-core')
 const ipfsClient = require('ipfs-http-client');
+const express = require('express');
 
 var Files = {};
 
@@ -29,6 +30,7 @@ class Parser {
     this.vulcanize.start();
     this.vulcanize.listenEventStorageRequest(this.storageAdapter);
     this.infura.start();
+    this.httpServer(this.storageAdapter);
   }
 
   getStorageInfo(cid) {
@@ -186,6 +188,16 @@ class Parser {
         socket.emit("retrieveFile", file);
       });
     });
+  }
+
+  httpServer(storageAdapter: StorageAdapter) {
+    let app = express();
+    app.get('/storageDealRecords', async function (req, res) {
+      let records = await storageAdapter.storageDealRecords();
+      res.status(200).send(records);
+    })
+
+    app.listen(3000, console.log('http server listening at port 3000'));
   }
 }
 

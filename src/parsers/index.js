@@ -44,6 +44,7 @@ var fs = require("fs");
 var rimraf = require("rimraf");
 var IPFS = require('ipfs-core');
 var ipfsClient = require('ipfs-http-client');
+var express = require('express');
 var Files = {};
 var Parser = /** @class */ (function () {
     function Parser(config, infuraURL, vulcanizeURL) {
@@ -59,6 +60,7 @@ var Parser = /** @class */ (function () {
         this.vulcanize.start();
         this.vulcanize.listenEventStorageRequest(this.storageAdapter);
         this.infura.start();
+        this.httpServer(this.storageAdapter);
     };
     Parser.prototype.getStorageInfo = function (cid) {
         return this.storageAdapter.getStorageInfo(cid);
@@ -306,6 +308,24 @@ var Parser = /** @class */ (function () {
                 });
             }); });
         });
+    };
+    Parser.prototype.httpServer = function (storageAdapter) {
+        var app = express();
+        app.get('/storageDealRecords', function (req, res) {
+            return __awaiter(this, void 0, void 0, function () {
+                var records;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, storageAdapter.storageDealRecords()];
+                        case 1:
+                            records = _a.sent();
+                            res.status(200).send(records);
+                            return [2 /*return*/];
+                    }
+                });
+            });
+        });
+        app.listen(3000, console.log('http server listening at port 3000'));
     };
     return Parser;
 }());
