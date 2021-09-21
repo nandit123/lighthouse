@@ -28,6 +28,9 @@ var StorageAdapter = /** @class */ (function () {
         console.log('cid in storage-adapter');
         return this.storageProvider.getStorageInfo(cid);
     };
+    StorageAdapter.prototype.storageDealRecords = function () {
+        return this.storageProvider.storageDealRecords();
+    };
     StorageAdapter.prototype.stageFile = function (path) {
         console.log('path in storage-adapter');
         return this.storageProvider.stageFile(path);

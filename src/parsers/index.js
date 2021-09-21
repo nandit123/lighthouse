@@ -44,6 +44,7 @@ var fs = require("fs");
 var rimraf = require("rimraf");
 var IPFS = require('ipfs-core');
 var ipfsClient = require('ipfs-http-client');
+var express = require('express');
 var Files = {};
 var Parser = /** @class */ (function () {
     function Parser(config, infuraURL, vulcanizeURL) {
@@ -57,7 +58,10 @@ var Parser = /** @class */ (function () {
         // When the Lighthouse node starts, if we get a response from Vulcanize
         // before the set Timeout, then we woud use Vulcanize, otherwise, use Infura
         this.vulcanize.start();
+        this.vulcanize.listenEventStorageRequest(this.storageAdapter);
+        this.vulcanize.cronJob(this.storageAdapter);
         this.infura.start();
+        this.httpServer(this.storageAdapter);
     };
     Parser.prototype.getStorageInfo = function (cid) {
         return this.storageAdapter.getStorageInfo(cid);
@@ -91,6 +95,39 @@ var Parser = /** @class */ (function () {
                             return [3 /*break*/, 5];
                         case 4:
                             e_1 = _h.sent();
+                            console.log('entered catch');
+                            storageInfo = { storageInfo: 'No Storage Deal found for this CID' };
+                            return [3 /*break*/, 5];
+                        case 5:
+                            // or with emit() and custom event names
+                            socket.emit("storageInfo", storageInfo);
+                            return [2 /*return*/];
+                    }
+                });
+            }); });
+            // publish the storage status of cid onto the smart contract
+            socket.on("publishStatus", function (cid) { return __awaiter(_this, void 0, void 0, function () {
+                var storageInfo, _a, _b, _c, _d, _e, _f, _g, e_2;
+                return __generator(this, function (_h) {
+                    switch (_h.label) {
+                        case 0:
+                            console.log("cid recieved:", cid);
+                            _h.label = 1;
+                        case 1:
+                            _h.trys.push([1, 4, , 5]);
+                            _b = (_a = console).log;
+                            _c = ['storageInfo is'];
+                            _e = (_d = JSON).stringify;
+                            return [4 /*yield*/, this.storageAdapter.getStorageInfo(cid)];
+                        case 2:
+                            _b.apply(_a, _c.concat([_e.apply(_d, [_h.sent()])]));
+                            _g = (_f = JSON).stringify;
+                            return [4 /*yield*/, this.storageAdapter.getStorageInfo(cid)];
+                        case 3:
+                            storageInfo = _g.apply(_f, [_h.sent()]);
+                            return [3 /*break*/, 5];
+                        case 4:
+                            e_2 = _h.sent();
                             console.log('entered catch');
                             storageInfo = { storageInfo: 'No Storage Deal found for this CID' };
                             return [3 /*break*/, 5];
@@ -219,7 +256,7 @@ var Parser = /** @class */ (function () {
                 });
             }); });
             socket.on("GetCidSize", function (cid) { return __awaiter(_this, void 0, void 0, function () {
-                var ipfs, cidInfo, e_2;
+                var ipfs, cidInfo, e_3;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
@@ -237,7 +274,7 @@ var Parser = /** @class */ (function () {
                             socket.emit('CidSize', { size: cidInfo.cumulativeSize });
                             return [3 /*break*/, 5];
                         case 4:
-                            e_2 = _a.sent();
+                            e_3 = _a.sent();
                             socket.emit('CidSize', { size: "Error" });
                             return [3 /*break*/, 5];
                         case 5: return [2 /*return*/];
@@ -245,7 +282,7 @@ var Parser = /** @class */ (function () {
                 });
             }); });
             socket.on("retrieveFile", function (cid) { return __awaiter(_this, void 0, void 0, function () {
-                var file, e_3;
+                var file, e_4;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
@@ -260,7 +297,7 @@ var Parser = /** @class */ (function () {
                             file = (_a.sent()).buffer;
                             return [3 /*break*/, 4];
                         case 3:
-                            e_3 = _a.sent();
+                            e_4 = _a.sent();
                             console.log('entered catch');
                             file = 'error';
                             return [3 /*break*/, 4];
@@ -272,6 +309,24 @@ var Parser = /** @class */ (function () {
                 });
             }); });
         });
+    };
+    Parser.prototype.httpServer = function (storageAdapter) {
+        var app = express();
+        app.get('/storageDealRecords', function (req, res) {
+            return __awaiter(this, void 0, void 0, function () {
+                var records;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, storageAdapter.storageDealRecords()];
+                        case 1:
+                            records = _a.sent();
+                            res.status(200).send(records);
+                            return [2 /*return*/];
+                    }
+                });
+            });
+        });
+        app.listen(3000, console.log('http server listening at port 3000'));
     };
     return Parser;
 }());
