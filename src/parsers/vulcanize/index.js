@@ -38,6 +38,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 var kik = require('kikstart-graphql-client');
 var Web3 = require("web3");
+var cron = require('node-cron');
 var abiEventStorageRequest = {
     "anonymous": false,
     "inputs": [
@@ -96,7 +97,7 @@ function publishStorageStatus(web3, PUBLIC_KEY, PRIVATE_KEY, lighthouseContract,
         var nonce, gasEstimate, e_1, tx, signPromise;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, web3.eth.getTransactionCount(PUBLIC_KEY, 'latest')];
+                case 0: return [4 /*yield*/, web3.eth.getTransactionCount(PUBLIC_KEY, 'pending')];
                 case 1:
                     nonce = _a.sent();
                     _a.label = 2;
@@ -251,6 +252,74 @@ var Vulcanize = /** @class */ (function () {
                 });
             });
         });
+    };
+    Vulcanize.prototype.cronJob = function (storageAdapter) {
+        var _this = this;
+        console.log('cron job scheduled');
+        cron.schedule(process.env.CRON_EXPRESSION, function () { return __awaiter(_this, void 0, void 0, function () {
+            var records, recordsList, storageInfoList, i, cid, dealId, active, deals, PUBLIC_KEY, PRIVATE_KEY, web3, web3Http, contractAbi, contractAddress, lighthouseContract, _i, _a, _b, cid, status_1, currentDealIds, e_2;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        console.log('cron expressions', process.env.CRON_EXPRESSION);
+                        return [4 /*yield*/, storageAdapter.storageDealRecords()];
+                    case 1:
+                        records = _c.sent();
+                        recordsList = records.recordsList;
+                        storageInfoList = {};
+                        for (i = 0; i < recordsList.length; i++) {
+                            cid = recordsList[i].rootCid;
+                            dealId = recordsList[i].dealInfo.dealId;
+                            active = !recordsList[i].pending;
+                            if (storageInfoList[cid]) { // multiple deals for same cid
+                                deals = storageInfoList[cid].dealList;
+                                deals.push(dealId);
+                                storageInfoList[cid] = { dealList: deals, active: true }; // @To-do : handle active
+                            }
+                            else { // first deal of cid
+                                storageInfoList[cid] = { dealList: [dealId], active: true };
+                            }
+                        }
+                        PUBLIC_KEY = process.env.PUBLIC_KEY;
+                        PRIVATE_KEY = process.env.PRIVATE_KEY;
+                        web3 = new Web3(process.env.ALCHEMY_WSS);
+                        web3Http = new Web3(process.env.ALCHEMY_HTTPS);
+                        contractAbi = require("./../../../contracts/abi/LighthouseV2.json");
+                        contractAddress = process.env.LIGHTHOUSE_SMART_CONTRACT;
+                        lighthouseContract = new web3.eth.Contract(contractAbi, contractAddress);
+                        _i = 0, _a = Object.entries(storageInfoList);
+                        _c.label = 2;
+                    case 2:
+                        if (!(_i < _a.length)) return [3 /*break*/, 10];
+                        _b = _a[_i], cid = _b[0], status_1 = _b[1];
+                        _c.label = 3;
+                    case 3:
+                        _c.trys.push([3, 8, , 9]);
+                        return [4 /*yield*/, lighthouseContract.methods.statuses(cid).call()];
+                    case 4:
+                        currentDealIds = _c.sent();
+                        currentDealIds = currentDealIds.dealIds;
+                        if (!(currentDealIds !== status_1["dealList"].toString())) return [3 /*break*/, 6];
+                        console.log('need to update deal for cid:', cid);
+                        return [4 /*yield*/, publishStorageStatus(web3Http, PUBLIC_KEY, PRIVATE_KEY, lighthouseContract, contractAddress, cid, status_1["dealList"].toString(), status_1["active"])];
+                    case 5:
+                        _c.sent();
+                        return [3 /*break*/, 7];
+                    case 6:
+                        console.log('no update to this cid:', cid);
+                        _c.label = 7;
+                    case 7: return [3 /*break*/, 9];
+                    case 8:
+                        e_2 = _c.sent();
+                        console.log('error:', e_2);
+                        return [3 /*break*/, 9];
+                    case 9:
+                        _i++;
+                        return [3 /*break*/, 2];
+                    case 10: return [2 /*return*/];
+                }
+            });
+        }); });
     };
     return Vulcanize;
 }());

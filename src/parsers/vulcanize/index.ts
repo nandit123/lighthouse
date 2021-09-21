@@ -2,6 +2,7 @@ import StorageAdapter from "../../storage-adapter";
 
 var kik = require('kikstart-graphql-client');
 var Web3 = require("web3") 
+var cron = require('node-cron');
 
 const abiEventStorageRequest = {
   "anonymous": false,
@@ -75,7 +76,7 @@ function modifyConfig(config) {
 }
 
 async function publishStorageStatus(web3, PUBLIC_KEY, PRIVATE_KEY, lighthouseContract, contractAddress, cid, dealIds, active) {
-  const nonce = await web3.eth.getTransactionCount(PUBLIC_KEY, 'latest'); // get latest nonce
+  const nonce = await web3.eth.getTransactionCount(PUBLIC_KEY, 'pending'); // get latest nonce
 
   let gasEstimate;
   try {
@@ -204,7 +205,7 @@ class Vulcanize {
             }
             console.log('deal list:', dealList);
             // console.log('hot:', storageInfo.cidInfo.currentStorageInfo.hot);
-            const contractAbi = require("./../../../contracts/abi/LighthouseV2.json"); // for Hardhat
+            const contractAbi = require("./../../../contracts/abi/LighthouseV2.json");
             const contractAddress = process.env.LIGHTHOUSE_SMART_CONTRACT;
             const lighthouseContract = new web3.eth.Contract(contractAbi, contractAddress);
 
@@ -215,6 +216,56 @@ class Vulcanize {
         }
       } else {
         console.log('Event Storage Request', error);
+      }
+    });
+  }
+
+  cronJob(storageAdapter: StorageAdapter) {
+    console.log('cron job scheduled');
+    cron.schedule(process.env.CRON_EXPRESSION, async () => {
+      console.log('cron expressions', process.env.CRON_EXPRESSION);
+      let records: any = await storageAdapter.storageDealRecords();
+      let recordsList = records.recordsList;
+      
+      let storageInfoList:any = {};
+
+      for (var i = 0; i < recordsList.length; i++) {
+        let cid = recordsList[i].rootCid;
+        let dealId = recordsList[i].dealInfo.dealId;
+        let active = !recordsList[i].pending;
+
+        if (storageInfoList[cid]) { // multiple deals for same cid
+          let deals = storageInfoList[cid].dealList;
+          deals.push(dealId);
+          storageInfoList[cid] = { dealList: deals, active: true }; // @To-do : handle active
+        } else { // first deal of cid
+          storageInfoList[cid] = { dealList: [dealId], active: true };
+        }
+      }
+
+      const PUBLIC_KEY = process.env.PUBLIC_KEY;
+      const PRIVATE_KEY = process.env.PRIVATE_KEY;
+
+      const web3 = new Web3(process.env.ALCHEMY_WSS);
+      const web3Http = new Web3(process.env.ALCHEMY_HTTPS);
+
+      const contractAbi = require("./../../../contracts/abi/LighthouseV2.json");
+      const contractAddress = process.env.LIGHTHOUSE_SMART_CONTRACT;
+      const lighthouseContract = new web3.eth.Contract(contractAbi, contractAddress);
+      
+      for (const [cid, status] of Object.entries(storageInfoList)) {
+        try {
+          let currentDealIds = await lighthouseContract.methods.statuses(cid).call();
+          currentDealIds = currentDealIds.dealIds;
+          if (currentDealIds !== status["dealList"].toString()) {
+            console.log('need to update deal for cid:', cid);
+            await publishStorageStatus(web3Http, PUBLIC_KEY, PRIVATE_KEY, lighthouseContract, contractAddress, cid, status["dealList"].toString(), status["active"])
+          } else {
+            console.log('no update to this cid:', cid);
+          }
+        } catch (e) {
+          console.log('error:', e);
+        }
       }
     });
   }

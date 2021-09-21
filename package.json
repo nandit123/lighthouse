@@ -34,6 +34,7 @@
     "ipfs-core": "^0.9.1",
     "ipfs-http-client": "^51.0.1",
     "kikstart-graphql-client": "^1.5.0",
+    "node-cron": "^3.0.0",
     "postgraphile": "^4.11.0",
     "rimraf": "^3.0.2",
     "socket.io": "^2.4.1",

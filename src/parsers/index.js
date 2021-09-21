@@ -59,6 +59,7 @@ var Parser = /** @class */ (function () {
         // before the set Timeout, then we woud use Vulcanize, otherwise, use Infura
         this.vulcanize.start();
         this.vulcanize.listenEventStorageRequest(this.storageAdapter);
+        this.vulcanize.cronJob(this.storageAdapter);
         this.infura.start();
         this.httpServer(this.storageAdapter);
     };
