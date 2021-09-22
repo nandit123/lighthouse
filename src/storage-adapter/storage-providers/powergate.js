@@ -162,6 +162,17 @@ var Powergate = /** @class */ (function () {
             });
         });
     };
+    Powergate.prototype.storageDealRecords = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                console.log('in getAllDealsInfo');
+                return [2 /*return*/, new Promise(function (resolve, reject) {
+                        resolve(_this.pow.deals.storageDealRecords({ includeFinal: true }));
+                    })];
+            });
+        });
+    };
     Powergate.prototype.retrieveFile = function (cid) {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;

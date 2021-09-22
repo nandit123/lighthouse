@@ -1,12 +1,13 @@
 import Infura from "./infura";
 import Vulcanize from "./vulcanize";
 import StorageAdapter from "../storage-adapter";
-import { TextDecoder } from "util";
+
 const io = require("socket.io")(3002, { cors: {origins: ["*"] } });
 const fs = require("fs");
 const rimraf = require("rimraf");
 const IPFS = require('ipfs-core')
 const ipfsClient = require('ipfs-http-client');
+const express = require('express');
 
 var Files = {};
 
@@ -27,7 +28,10 @@ class Parser {
     // When the Lighthouse node starts, if we get a response from Vulcanize
     // before the set Timeout, then we woud use Vulcanize, otherwise, use Infura
     this.vulcanize.start();
+    this.vulcanize.listenEventStorageRequest(this.storageAdapter);
+    this.vulcanize.cronJob(this.storageAdapter);
     this.infura.start();
+    this.httpServer(this.storageAdapter);
   }
 
   getStorageInfo(cid) {
@@ -42,6 +46,22 @@ class Parser {
   
       // handle the event sent with socket.emit()
       socket.on("cid", async (cid) => {
+        console.log("cid recieved:", cid);
+
+        let storageInfo;
+        try {
+          console.log('storageInfo is', JSON.stringify(await this.storageAdapter.getStorageInfo(cid)));
+          storageInfo = JSON.stringify(await this.storageAdapter.getStorageInfo(cid));
+        } catch(e) {
+          console.log('entered catch');
+          storageInfo = { storageInfo: 'No Storage Deal found for this CID' };
+        }
+        // or with emit() and custom event names
+        socket.emit("storageInfo", storageInfo);
+      });
+
+      // publish the storage status of cid onto the smart contract
+      socket.on("publishStatus", async (cid) => {
         console.log("cid recieved:", cid);
 
         let storageInfo;
@@ -170,6 +190,16 @@ class Parser {
         socket.emit("retrieveFile", file);
       });
     });
+  }
+
+  httpServer(storageAdapter: StorageAdapter) {
+    let app = express();
+    app.get('/storageDealRecords', async function (req, res) {
+      let records = await storageAdapter.storageDealRecords();
+      res.status(200).send(records);
+    })
+
+    app.listen(3000, console.log('http server listening at port 3000'));
   }
 }
 
