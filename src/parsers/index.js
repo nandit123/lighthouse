@@ -224,7 +224,7 @@ var Parser = /** @class */ (function () {
                     switch (_a.label) {
                         case 0:
                             console.log("Size for cid:", cid);
-                            return [4 /*yield*/, ipfsClient.create({ host: 'localhost', port: '5001', protocol: 'http' })];
+                            return [4 /*yield*/, ipfsClient.create({ host: 'localhost', port: '5002', protocol: 'http' })];
                         case 1:
                             ipfs = _a.sent();
                             _a.label = 2;
@@ -238,6 +238,7 @@ var Parser = /** @class */ (function () {
                             return [3 /*break*/, 5];
                         case 4:
                             e_2 = _a.sent();
+                            console.log("getCIDSize error:", e_2);
                             socket.emit('CidSize', { size: "Error" });
                             return [3 /*break*/, 5];
                         case 5: return [2 /*return*/];

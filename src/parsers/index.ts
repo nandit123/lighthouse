@@ -143,12 +143,13 @@ class Parser {
 
       socket.on("GetCidSize", async(cid) => {
         console.log("Size for cid:", cid);
-        const ipfs = await ipfsClient.create({ host: 'localhost', port: '5001', protocol: 'http' })
+        const ipfs = await ipfsClient.create({ host: 'localhost', port: '5002', protocol: 'http' })
         try {
           let cidInfo = await ipfs.files.stat("/ipfs/" + cid);
           console.log('cidinfo:', cidInfo);
           socket.emit('CidSize', { size: cidInfo.cumulativeSize });
         } catch (e) {
+	  console.log("getCIDSize error:", e);
           socket.emit('CidSize', { size: "Error" });
         }
       });
