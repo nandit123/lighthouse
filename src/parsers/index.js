@@ -35,10 +35,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __asyncValues = (this && this.__asyncValues) || function (o) {
+    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
+    var m = o[Symbol.asyncIterator], i;
+    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
+    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
+    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
+};
 exports.__esModule = true;
 var infura_1 = require("./infura");
 var vulcanize_1 = require("./vulcanize");
 var storage_adapter_1 = require("../storage-adapter");
+var ipfs_http_client_1 = require("ipfs-http-client");
 var io = require("socket.io")(3002, { cors: { origins: ["*"] } });
 var fs = require("fs");
 var rimraf = require("rimraf");
@@ -240,15 +248,54 @@ var Parser = /** @class */ (function () {
                 });
             }); });
             socket.on("GetCid", function (path) { return __awaiter(_this, void 0, void 0, function () {
-                var cid;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
+                var cid, ipfs, globSourceOptions, _a, _b, file, e_3_1;
+                var e_3, _c;
+                return __generator(this, function (_d) {
+                    switch (_d.label) {
                         case 0:
                             console.log('GetCid for folder:', path);
                             return [4 /*yield*/, this.storageAdapter.stageFolder(path)];
                         case 1:
-                            cid = _a.sent();
+                            cid = _d.sent();
                             console.log('cid is:', cid);
+                            return [4 /*yield*/, ipfsClient.create({ host: 'localhost', port: '5001', protocol: 'http' })];
+                        case 2:
+                            ipfs = _d.sent();
+                            console.log('ipfs instance created');
+                            globSourceOptions = {
+                                recursive: true
+                            };
+                            console.log('path:', path);
+                            _d.label = 3;
+                        case 3:
+                            _d.trys.push([3, 8, 9, 14]);
+                            _a = __asyncValues(ipfs.addAll(ipfs_http_client_1.globSource('./' + path, globSourceOptions)));
+                            _d.label = 4;
+                        case 4: return [4 /*yield*/, _a.next()];
+                        case 5:
+                            if (!(_b = _d.sent(), !_b.done)) return [3 /*break*/, 7];
+                            file = _b.value;
+                            console.log(file);
+                            _d.label = 6;
+                        case 6: return [3 /*break*/, 4];
+                        case 7: return [3 /*break*/, 14];
+                        case 8:
+                            e_3_1 = _d.sent();
+                            e_3 = { error: e_3_1 };
+                            return [3 /*break*/, 14];
+                        case 9:
+                            _d.trys.push([9, , 12, 13]);
+                            if (!(_b && !_b.done && (_c = _a["return"]))) return [3 /*break*/, 11];
+                            return [4 /*yield*/, _c.call(_a)];
+                        case 10:
+                            _d.sent();
+                            _d.label = 11;
+                        case 11: return [3 /*break*/, 13];
+                        case 12:
+                            if (e_3) throw e_3.error;
+                            return [7 /*endfinally*/];
+                        case 13: return [7 /*endfinally*/];
+                        case 14:
                             rimraf(path, function () { console.log("deleted folder:", path); });
                             socket.emit('FolderCid', { cid: cid });
                             return [2 /*return*/];
@@ -256,17 +303,19 @@ var Parser = /** @class */ (function () {
                 });
             }); });
             socket.on("GetCidSize", function (cid) { return __awaiter(_this, void 0, void 0, function () {
-                var ipfs, cidInfo, e_3;
+                var ipfs, cidInfo, e_4;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
                             console.log("Size for cid:", cid);
-                            return [4 /*yield*/, ipfsClient.create({ host: 'localhost', port: '5002', protocol: 'http' })];
+                            return [4 /*yield*/, ipfsClient.create({ host: 'localhost', port: '5001', protocol: 'http' })];
                         case 1:
                             ipfs = _a.sent();
+                            console.log('ipfsClient created');
                             _a.label = 2;
                         case 2:
                             _a.trys.push([2, 4, , 5]);
+                            console.log('inside try block');
                             return [4 /*yield*/, ipfs.files.stat("/ipfs/" + cid)];
                         case 3:
                             cidInfo = _a.sent();
@@ -274,7 +323,8 @@ var Parser = /** @class */ (function () {
                             socket.emit('CidSize', { size: cidInfo.cumulativeSize });
                             return [3 /*break*/, 5];
                         case 4:
-                            e_3 = _a.sent();
+                            e_4 = _a.sent();
+                            console.log("getCIDSize error:", e_4);
                             socket.emit('CidSize', { size: "Error" });
                             return [3 /*break*/, 5];
                         case 5: return [2 /*return*/];
@@ -282,7 +332,7 @@ var Parser = /** @class */ (function () {
                 });
             }); });
             socket.on("retrieveFile", function (cid) { return __awaiter(_this, void 0, void 0, function () {
-                var file, e_4;
+                var file, e_5;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
@@ -297,7 +347,7 @@ var Parser = /** @class */ (function () {
                             file = (_a.sent()).buffer;
                             return [3 /*break*/, 4];
                         case 3:
-                            e_4 = _a.sent();
+                            e_5 = _a.sent();
                             console.log('entered catch');
                             file = 'error';
                             return [3 /*break*/, 4];

@@ -1,6 +1,7 @@
 import Infura from "./infura";
 import Vulcanize from "./vulcanize";
 import StorageAdapter from "../storage-adapter";
+import { globSource } from 'ipfs-http-client';
 
 const io = require("socket.io")(3002, { cors: {origins: ["*"] } });
 const fs = require("fs");
@@ -157,14 +158,28 @@ class Parser {
         console.log('GetCid for folder:', path);
         let cid: any = await this.storageAdapter.stageFolder(path);
         console.log('cid is:', cid);
+	const ipfs = await ipfsClient.create({ host: 'localhost', port: '5001', protocol: 'http' })
+	console.log('ipfs instance created');
+
+	//options specific to globSource
+	const globSourceOptions = {
+		recursive: true
+	};
+	console.log('path:', path);
+	for await (const file of ipfs.addAll(globSource('./' + path, globSourceOptions))) {
+		console.log(file)
+	}
+
         rimraf(path, function () { console.log("deleted folder:", path); });
         socket.emit('FolderCid', {cid: cid});
       });
 
       socket.on("GetCidSize", async(cid) => {
         console.log("Size for cid:", cid);
-        const ipfs = await ipfsClient.create({ host: 'localhost', port: '5002', protocol: 'http' })
-        try {
+        const ipfs = await ipfsClient.create({ host: 'localhost', port: '5001', protocol: 'http' })
+        console.log('ipfsClient created');
+	try {
+	  console.log('inside try block');
           let cidInfo = await ipfs.files.stat("/ipfs/" + cid);
           console.log('cidinfo:', cidInfo);
           socket.emit('CidSize', { size: cidInfo.cumulativeSize });
