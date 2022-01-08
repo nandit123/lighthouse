@@ -1,6 +1,7 @@
 import Infura from "./infura";
 import Vulcanize from "./vulcanize";
 import StorageAdapter from "../storage-adapter";
+import { globSource } from 'ipfs-http-client'
 
 const io = require("socket.io")(3002, { cors: {origins: ["*"] } });
 const fs = require("fs");
@@ -157,6 +158,9 @@ class Parser {
         console.log('GetCid for folder:', path);
         let cid: any = await this.storageAdapter.stageFolder(path);
         console.log('cid is:', cid);
+        const ipfs = await ipfsClient.create({ host: 'localhost', port: '5001', protocol: 'http' })
+        cid = await ipfs.add(globSource(path));
+        console.log('local cid:', cid);
         rimraf(path, function () { console.log("deleted folder:", path); });
         socket.emit('FolderCid', {cid: cid});
       });
